@@ -1,4 +1,4 @@
-# onebus-iot
+# ONEBUS
 
 [![Status: Em Desenvolvimento](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow.svg)](https://github.com/dedezito/OneBus)
 [![Flask](https://img.shields.io/badge/-Flask-000000?logo=flask&logoColor=white&style=flat-square)](https://flask.palletsprojects.com/)
@@ -14,7 +14,7 @@ A solução atua em conjunto com um sistema embarcado, que capta e envia dados d
 
 ## Tabela de Conteúdo 📋
 
-- [novo-onebus](#novo-onebus)
+- [ONEBUS](#onebus)
   - [Introdução](#introdução)
   - [Tabela de Conteúdo 📋](#tabela-de-conteúdo-)
   - [Diagramas e DER](#diagramas-e-der)
