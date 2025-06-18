@@ -1,4 +1,4 @@
-# novo-onebus
+# onebus-iot
 
 [![Status: Em Desenvolvimento](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow.svg)](https://github.com/dedezito/OneBus)
 [![Flask](https://img.shields.io/badge/-Flask-000000?logo=flask&logoColor=white&style=flat-square)](https://flask.palletsprojects.com/)
