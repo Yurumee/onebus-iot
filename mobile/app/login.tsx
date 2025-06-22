@@ -1,25 +1,29 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { View, StyleSheet, Image, TextInput, TouchableHighlight, Text } from "react-native";
+import { AuthContext } from "./utils/authContext";
 
 export default function Login() {
     const [cpf, setCpf] = useState('');
     const [senha, setSenha] = useState('');
-
     const inputCpf = (event:any) => {
         setCpf(event.target.value)
     };
-
     const inputSenha = (event:any) => {
         setSenha(event.target.value)
     };
+
+    const authContext = useContext(AuthContext);
 
     return (
         <View style={styles.bg}>
             <View style={styles.container}>
                 <Image style={styles.logo} source={require('../assets/images/logotipo.png')} />
+
                 <TextInput style={styles.input} placeholder="CPF" value={cpf} onChange={inputCpf} />
+                
                 <TextInput style={styles.input} placeholder="Senha" secureTextEntry={true} value={senha} onChange={inputSenha} />
-                <TouchableHighlight style={styles.botao}>
+
+                <TouchableHighlight style={styles.botao} onPress={authContext.logIn}>
                     <Text style={styles.textoBotao}>ENTRAR</Text>
                 </TouchableHighlight>
             </View>
