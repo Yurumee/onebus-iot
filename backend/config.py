@@ -11,4 +11,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/database/one
 # engine = create_engine(f'sqlite:///{app.root_path}/database/onebus.db', pool_size=10, max_overflow=0)
 
 # configurando banco de dados
-db = SQLAlchemy(app, model_class=DeclarativeBase)
+class Base(DeclarativeBase):
+    pass
+db = SQLAlchemy(app, model_class=Base)
