@@ -23,7 +23,7 @@ export default function Login() {
                 
                 <TextInput style={styles.input} placeholder="Senha" secureTextEntry={true} value={senha} onChange={inputSenha} />
 
-                <TouchableHighlight style={styles.botao} onPress={authContext.logIn}>
+                <TouchableHighlight style={styles.botao} onPress={() => authContext.logIn(cpf)}>
                     <Text style={styles.textoBotao}>ENTRAR</Text>
                 </TouchableHighlight>
             </View>

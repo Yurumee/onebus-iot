@@ -5,7 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type AuthState = {
     isLoggedIn: boolean,
     isReady: boolean,
-    logIn: () => void,
+    cpf: any,
+    logIn: (cpf:any) => void,
     logOut: () => void
 };
 
@@ -14,16 +15,18 @@ const authStorageKey = 'auth-key';
 export const AuthContext = createContext<AuthState>({
     isLoggedIn: false,
     isReady: false,
-    logIn: () => {},
+    cpf: '',
+    logIn: (cpf:any) => {},
     logOut: () => {}
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
     const [isReady, setIsReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [cpf, setCpf] = useState('');
     const router = useRouter();
 
-    const storeAuthState = async (newState: {isLoggedIn: boolean}) => {
+    const storeAuthState = async (newState: {isLoggedIn: boolean, cpf: any}) => {
         try {
             const jsonValue = JSON.stringify(newState);
             await AsyncStorage.setItem(authStorageKey, jsonValue);
@@ -40,10 +43,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
     }
 
-    const logIn = () => {
+    const logIn = (cpf:any) => {
         setIsLoggedIn(true);
-        storeAuthState({ isLoggedIn: true });
-        router.replace('/');
+        setCpf(cpf);
+        storeAuthState({ isLoggedIn: true, cpf: cpf });
+        router.replace('/',{});
     };
 
     const logOut = () => {
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
                 if (value !== null) {
                     const auth = JSON.parse(value);
                     setIsLoggedIn(auth.isLoggedIn);
+                    setCpf(auth.cpf);
                 };
             } catch (error) {
                 console.log('Error fetching from storage.', error);
@@ -69,7 +74,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isReady, logIn, logOut }}>
+        <AuthContext.Provider value={{ isLoggedIn, isReady, cpf, logIn, logOut }}>
             {children}
         </AuthContext.Provider>
     );
