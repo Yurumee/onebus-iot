@@ -13,4 +13,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/database/one
 # configurando banco de dados
 class Base(DeclarativeBase):
     pass
+
 db = SQLAlchemy(app, model_class=Base)
