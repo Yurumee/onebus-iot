@@ -1,7 +1,6 @@
 from config import app, db
 from flask import Blueprint
 from models.Motorista import Motorista
-from sqlalchemy import or_
 
 view_motorista = Blueprint('view_motorista', __name__)
 
@@ -12,7 +11,7 @@ def home():
     nome = 'Alice Mock'
     senhaTop = 'senhamuitoforte123'
 
-    if Motorista.query.filter(or_(Motorista.CNH==cnh, Motorista.CPF==cpf)).first():
+    if Motorista.query.filter_by(CPF=cpf).first():
         return 'MOTORISTA JÁ CADASTRADO'
 
     MOCKtorista = Motorista(
@@ -25,5 +24,5 @@ def home():
     db.session.add(MOCKtorista)
     db.session.commit()
 
-    return "AEEEEE"
+    return "Página principal do motorista"
 

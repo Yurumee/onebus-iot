@@ -24,5 +24,5 @@ def home_cidadao():
     db.session.add(MOCKCidadao)
     db.session.commit()
 
-    return "AEEEEE"
+    return "Página principal do cidadão"
 
