@@ -1,4 +1,5 @@
 from config import db
+# from models import Motorista, Carro
 from models.Motorista import Motorista
 from models.Carro import Carro
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -12,10 +13,15 @@ class Trajeto(db.Model):
     destino: Mapped[str] = mapped_column(String(50), nullable=False)
     kmEstimado: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    motoristaResp: Mapped[str] = mapped_column(ForeignKey('motorista.CPF'))
-    placaCarro: Mapped[str] = mapped_column(ForeignKey('carro.placa'))
+    # trajeto com um motorista
+    # um motorista pode ter varios trajetos
+    motoristaResp: Mapped[str] = mapped_column(ForeignKey('motorista.CNH'))
+
+    # trajeto com apenas um embarcado
+    # um embarcado pode ter varios trajetos 
+    idCarro: Mapped[str] = mapped_column(ForeignKey('carro.idEmbarcado'))
 
     motoristaFK: Mapped[Motorista] = relationship(back_populates='motoristaPK')
-    placaCarroFK: Mapped[Carro] = relationship(back_populates='placaCarroPK')
+    idEmbarcadoFK: Mapped[Carro] = relationship(back_populates='idEmbarcadoPK')
 
 

@@ -1,3 +1,4 @@
+# from typing import List
 from config import db
 from models.Usuario import Usuario
 from models.Trajeto import Trajeto
@@ -9,5 +10,5 @@ class Motorista(db.Model, Usuario):
 
     CNH: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    motoristaPK: Mapped[Trajeto] = relationship(back_populates='motoristaFK')
+    motoristaPK: Mapped[list[Trajeto]] = relationship(back_populates='motoristaFK')
 

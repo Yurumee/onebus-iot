@@ -10,4 +10,4 @@ class Carro(db.Model):
     placa: Mapped[str] = mapped_column(String(7), nullable=False)
     tipoVeiculo: Mapped[str] = mapped_column(String(20), nullable=False)
     
-    placaCarroPK: Mapped[Trajeto] = relationship(back_populates='placaCarroFK')
+    idEmbarcadoPK: Mapped[list[Trajeto]] = relationship(back_populates='idEmbarcadoFK')
