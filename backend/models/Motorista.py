@@ -10,5 +10,5 @@ class Motorista(db.Model, Usuario):
 
     CNH: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    trajetos: Mapped[List[Trajeto]] = relationship(Trajeto, back_populates='motorista')
+    trajetos: Mapped[List['Trajeto']] = relationship('Trajeto', back_populates='motorista')
 
