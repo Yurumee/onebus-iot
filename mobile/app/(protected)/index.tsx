@@ -1,32 +1,37 @@
 import React, {useContext} from "react";
 import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
 import { AuthContext } from "../utils/authContext";
+import { useRouter } from "expo-router";
 
 export default function Index() {
   const authContext = useContext(AuthContext);
+  const router = useRouter();
+
+  {/* ALTERAR */}
+  const dadosUsuario = {
+    nome: 'André Gustavo Silva Dantas'
+  }
 
   return (
     <View style={styles.bg}>
-      {/*<Text>Edit app/index.tsx to edit this screen. CPF: {authContext.cpf}</Text>*/}
-      {/*<Button title="sair" onPress={authContext.logOut} />*/}
       <View style={styles.container}>
         <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
 
-        <Text style={styles.nome}>Nome Provisório da Silva</Text>
+        <Text style={styles.nome}>{dadosUsuario.nome}</Text> {/* ALTERAR */}
 
         <TouchableHighlight style={styles.botaoMapa} onPress={() => {}}>
             <Text style={styles.textoBotao}>VER MAPA</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={styles.botao} onPress={() => {}}>
+        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => router.replace('/motorista',{})}>
             <Text style={styles.textoBotao}>SELECIONAR MOTORISTA</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={styles.botao} onPress={() => {}}>
+        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => {}}>
             <Text style={styles.textoBotao}>CONFIGURAÇÕES</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={styles.botao} onPress={() => {}}>
+        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => {}}>
             <Text style={styles.textoBotao} onPress={authContext.logOut}>SAIR</Text>
         </TouchableHighlight>
       </View>
@@ -36,12 +41,12 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   bg: {
-      backgroundColor: '#FFFFFF',
-      height: '100%',
-      width: '100%',
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
+    backgroundColor: '#FFFFFF',
+    height: '100%',
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   container: {
     width: '100%',
