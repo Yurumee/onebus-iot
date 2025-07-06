@@ -19,7 +19,7 @@ export default function Index() {
 
         <Text style={styles.nome}>{dadosUsuario.nome}</Text> {/* ALTERAR */}
 
-        <TouchableHighlight style={styles.botaoMapa} onPress={() => {}}>
+        <TouchableHighlight underlayColor={'#D9BD3F'} style={styles.botaoMapa} onPress={() => {}}>
             <Text style={styles.textoBotao}>VER MAPA</Text>
         </TouchableHighlight>
 

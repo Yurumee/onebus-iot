@@ -32,7 +32,7 @@ export default function Index() {
               data={listaMotoristas}
               renderItem={({item}) => {
                 return <>
-                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.motoristaCard} onPress={() => {}}>
+                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.motoristaCard} onPress={() => {authContext.escolherMotorista(item.cpf)}}>
                             <View style={styles.cardContainer}>
                                 <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
                                 <View>
