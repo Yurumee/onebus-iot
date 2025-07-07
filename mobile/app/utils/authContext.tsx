@@ -84,7 +84,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const logOut = async () => {
         setIsLoggedIn(false);
-        deleteAuthState()
+        setMotoristaCpf('')
+        setTrajetoId('')
+        deleteAuthState();
         router.replace('/login');
     };
 
