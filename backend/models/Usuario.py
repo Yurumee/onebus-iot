@@ -1,0 +1,7 @@
+from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import String
+
+class Usuario():
+    CPF: Mapped[str] = mapped_column(String(14), primary_key=True)
+    nomeCompleto: Mapped[str] = mapped_column(String(80), nullable=False)
+    senha: Mapped[str] = mapped_column(String(30), nullable=False)
