@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import create_engine
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend/templates')
 
 # configurando banco de dados sqlite
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/database/onebus.db'

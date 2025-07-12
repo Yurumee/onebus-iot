@@ -1,5 +1,6 @@
 from config import db, app
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
+# from sqlalchemy import select
 from datetime import datetime
 from models.Trajeto import Trajeto
 from models.Motorista import Motorista
@@ -30,14 +31,15 @@ def post_new_route():
     
     return 'Trajeto inserido!'
 
-@app.route('/get-trajeto', methods=['GET'])
+@app.route('/get-all-trajeto', methods=['GET'])
 def get_trajeto():
-    try:
-        teste = Trajeto.query.join(
-            Motorista, Trajeto.motoristaResp == Motorista.CNH
-        )
-    except Exception as e:
-        return f'{e}'
+    trajeto_mostrar = Trajeto.query.all()
     
-    return teste
+    return render_template('trajetos.html', all_trajetos=trajeto_mostrar)
 
+@app.route('/get-especific-trajeto', methods=['GET'])
+def get_especific_trajeto():
+    # trajeto_teste = Trajeto.query(Trajeto.destino, Trajeto.origem, Motorista.nomeCompleto).filter(Trajeto.motoristaResp == Motorista.CNH)
+    trajeto_teste = Trajeto.query(Trajeto.destino, Trajeto.origem, Motorista.nomeCompleto).join(Motorista).filter(Trajeto.motoristaResp == Motorista.CNH)
+
+    return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste)
