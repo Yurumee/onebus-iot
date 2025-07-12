@@ -11,12 +11,12 @@ export default function Index() {
   {/* ALTERAR */}
   const listaMotoristas = [
     {
-        nome: 'Umberto da Silva',
-        cpf: '123.456.789-10'
+        nomeCompleto: 'Umberto da Silva',
+        CPF: '123.456.789-10'
     },
     {
-        nome: 'Doisberto da Silva',
-        cpf: '024.681.012-14'
+        nomeCompleto: 'Doisberto da Silva',
+        CPF: '024.681.012-14'
     }
   ]
 
@@ -32,12 +32,12 @@ export default function Index() {
               data={listaMotoristas}
               renderItem={({item}) => {
                 return <>
-                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.motoristaCard} onPress={() => {authContext.escolherMotorista(item.cpf)}}>
+                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.motoristaCard} onPress={() => {authContext.escolherMotorista(item.CPF)}}>
                             <View style={styles.cardContainer}>
                                 <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
                                 <View>
-                                    <Text>{item.nome}</Text> {/* ALTERAR */}
-                                    <Text>{item.cpf}</Text> {/* ALTERAR */}
+                                    <Text>{item.nomeCompleto}</Text> {/* ALTERAR */}
+                                    <Text>{item.CPF}</Text> {/* ALTERAR */}
                                 </View>
                             </View>
                         </TouchableHighlight>

@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 type AuthState = {
     isLoggedIn: boolean,
@@ -76,6 +77,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     const logIn = (cpf:any) => {
+        
         setIsLoggedIn(true);
         setCpf(cpf);
         storeAuthState({ isLoggedIn: true, cpf: cpf });
