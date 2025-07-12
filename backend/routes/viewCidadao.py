@@ -31,8 +31,8 @@ def singin():
     # if request.method == 'POST':
         # cpf = request.form.get('cpf')
         # password = request.form.get('senha')
-    # cpf = '789.456.123-00'
-    # password = 'senhaforte123'
+    cpf = request.form.get('cpf')
+    password = request.form.get('senha')
 
     user = Cidadao.query.filter_by(CPF=cpf).first()
 
