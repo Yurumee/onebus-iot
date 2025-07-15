@@ -14,13 +14,10 @@ class Trajeto(db.Model):
 
     idTrajeto: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     servicoPrestado: Mapped[str] = mapped_column(String(50), nullable=False)
-    origem: Mapped[str] = mapped_column(String(50), nullable=False)
-    destino: Mapped[str] = mapped_column(String(50), nullable=False)
-    kmEstimado: Mapped[str] = mapped_column(String(50), nullable=False)
-    horarioInicio: Mapped[datetime.time] = mapped_column()
-    horarioFim: Mapped[datetime.time] = mapped_column()
-
-
+    pontoOrigem: Mapped[str] = mapped_column(String(50), nullable=False)
+    pontoDestino: Mapped[str] = mapped_column(String(50), nullable=False)
+    horarioEstimado: Mapped[datetime.time] = mapped_column(nullable=False)
+    
     # trajeto com um motorista
     # um motorista pode ter varios trajetos
     motoristaResp: Mapped[int] = mapped_column(Integer, ForeignKey('motorista.CNH'))

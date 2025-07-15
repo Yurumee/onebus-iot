@@ -5,3 +5,4 @@ class Usuario():
     CPF: Mapped[str] = mapped_column(String(14), primary_key=True)
     nomeCompleto: Mapped[str] = mapped_column(String(80), nullable=False)
     senha: Mapped[str] = mapped_column(String(30), nullable=False)
+    tipoUsuario: Mapped[str] = mapped_column(String(20), nullable=False)
