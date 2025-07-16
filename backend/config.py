@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
 app = Flask(__name__, template_folder='../frontend/templates')
 
@@ -12,6 +12,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/database/one
 
 # configurando banco de dados
 class Base(DeclarativeBase):
-    pass
+    # responsáveis para relacionamento 1:N
+    __abstract__ = True
+    __allow_unmapped__ = True
 
 db = SQLAlchemy(app, model_class=Base)
