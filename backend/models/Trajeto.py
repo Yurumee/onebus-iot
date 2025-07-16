@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey, Integer
 
 if TYPE_CHECKING:
-    from models.Motorista import Motorista
-    from models.Carro import Carro
+    from models.motorista import Motorista
+    from models.carro import Carro
 
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'
@@ -20,13 +20,13 @@ class Trajeto(db.Model):
     
     # trajeto com um motorista
     # um motorista pode ter varios trajetos
-    motoristaResp: Mapped[int] = mapped_column(Integer, ForeignKey('motorista.CNH'))
+    # motoristaResp: Mapped[int] = mapped_column(Integer, ForeignKey('motorista.cnh'))
 
     # trajeto com apenas um embarcado
     # um embarcado pode ter varios trajetos 
-    idEmbarcado: Mapped[str] = mapped_column(String, ForeignKey('carro.idEmbarcado'))
+    # idEmbarcado: Mapped[str] = mapped_column(String, ForeignKey('carro.idEmbarcado'))
 
-    motorista: Mapped['Motorista'] = relationship('Motorista', back_populates='trajetos')
-    embarcado: Mapped['Carro'] = relationship('Carro', back_populates='trajetos')
+    # motorista: Mapped['Motorista'] = relationship('Motorista', back_populates='trajetos')
+    # embarcado: Mapped['Carro'] = relationship('Carro', back_populates='trajetos')
 
 

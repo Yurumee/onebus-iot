@@ -2,8 +2,8 @@ from config import db, app
 from flask import Blueprint, jsonify, render_template
 # from sqlalchemy import select
 from datetime import datetime
-from models.Trajeto import Trajeto
-from models.Motorista import Motorista
+from models.trajeto import Trajeto
+from models.motorista import Motorista
 
 view_trajeto = Blueprint('view_trajeto', __name__)
 

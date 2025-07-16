@@ -1,15 +1,18 @@
 from config import db
-from models.Usuario import Usuario
-from models.Carro import Carro
+from typing import TYPE_CHECKING, Optional
+from models.usuario import Usuario
+# from models.carro import Carro
 # from models.Trajeto import Trajeto
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import Integer, String, ForeignKey
+
+if TYPE_CHECKING:
+    from models.carro import Carro
 class Motorista(db.Model, Usuario):
     __tablename__ = 'motorista'
 
-    CNH: Mapped[int] = mapped_column(Integer, primary_key=True)
+    cnh: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    veiculoUsado: Mapped[str] = mapped_column(ForeignKey('carro.placa'))
-    veiculoFK: Mapped['Carro'] = relationship('Carro', back_populates='motoristasFK')
+    veiculoUsado: Mapped['Carro'] = relationship()
 
-    # trajetos: Mapped[List['Trajeto']] = relationship('Trajeto', back_populates='motorista')
+    # veiculoUsado: Mapped[Optional[str]] = mapped_column(ForeignKey('carro.placa'))

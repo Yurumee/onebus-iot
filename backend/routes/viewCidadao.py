@@ -1,6 +1,6 @@
 from config import app, db
 from flask import Blueprint, request
-from models.Cidadao import Cidadao
+from models.cidadao import Cidadao
 
 view_cidadao = Blueprint('view_cidadao', __name__)
 
