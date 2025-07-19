@@ -1,0 +1,20 @@
+/* src/index.css */
+
+/* 1. Definindo sua paleta de cores globalmente */
+:root {
+  --yellow: #F1D145;
+  --dark-text: #292E33;
+  --dark-gray: #3D454D;
+  --white: #FFFFFF;
+  --background: #ECF0F6;
+  --green: #106F4C;
+  --medium-gray: #636A73;
+  --red: #FF0000;
+  --blue: #0d6efd;
+}
+
+/* Estilos de corpo que você quer em todo o app */
+body {
+  font-family: 'Inter', sans-serif; /* Exemplo de fonte global */
+  background-color: var(--background);
+}

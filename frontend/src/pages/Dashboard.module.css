@@ -1,0 +1,81 @@
+/* src/pages/Dashboard.module.css */
+
+.dashboardPage {
+    background-color: var(--background);
+    padding: 24px;
+}
+
+.dashboardTitle {
+    color: var(--dark-text);
+    font-weight: 600;
+}
+
+.statCard {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.statCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.statCard :global(.card-body) {
+    position: relative;
+    z-index: 2;
+}
+
+.statCardIconBg {
+    position: absolute;
+    z-index: 1;
+    right: -20px;
+    bottom: -20px;
+    font-size: 6rem;
+    color: rgba(0, 0, 0, 0.05);
+    transform: rotate(-15deg);
+}
+
+.statCardTitle {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.statCardValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.total .statCardTitle {
+    color: var(--blue);
+}
+
+.online .statCardTitle {
+    color: var(--green);
+}
+
+.routes .statCardTitle {
+    color: var(--yellow);
+}
+
+.alerts .statCardTitle {
+    color: var(--red);
+}
+
+.mapCard {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: none;
+}
+
+.mapCard :global(.card-header) {
+    background-color: var(--white);
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: var(--dark-text);
+}
