@@ -1,10 +1,8 @@
 from config import db
 from typing import TYPE_CHECKING, Optional
 from models.usuario import Usuario
-# from models.carro import Carro
-# from models.Trajeto import Trajeto
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import Integer, String, ForeignKey, Column
+from sqlalchemy import Integer, ForeignKey
 
 if TYPE_CHECKING:
     from models.carro import Carro

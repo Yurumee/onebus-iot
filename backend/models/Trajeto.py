@@ -6,27 +6,30 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey, Integer
 
 if TYPE_CHECKING:
-    from models.motorista import Motorista
     from models.carro import Carro
+    from models.pontoTrajeto import PontoTrajeto
 
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'
 
     idTrajeto: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    servicoPrestado: Mapped[str] = mapped_column(String(50), nullable=False)
-    pontoOrigem: Mapped[str] = mapped_column(String(50), nullable=False)
-    pontoDestino: Mapped[str] = mapped_column(String(50), nullable=False)
-    horarioEstimado: Mapped[datetime.time] = mapped_column(nullable=False)
+    servicoPrestado: Mapped[str] = mapped_column(String(50))
+    pontoOrigem: Mapped[str] = mapped_column(String(50))
+    pontoDestino: Mapped[str] = mapped_column(String(50))
+    horarioEstimado: Mapped[datetime.time] = mapped_column()
     
-    # trajeto com um motorista
-    # um motorista pode ter varios trajetos
-    # motoristaResp: Mapped[int] = mapped_column(Integer, ForeignKey('motorista.cnh'))
+    # coluna de chave estrangeira
+    carro_placa: Mapped[str] = mapped_column(ForeignKey('carro.placa'))
 
-    # trajeto com apenas um embarcado
-    # um embarcado pode ter varios trajetos 
-    # idEmbarcado: Mapped[str] = mapped_column(String, ForeignKey('carro.idEmbarcado'))
+    # relacionamento para acesso na via contrária
+    # se comunica com o relacionamento com Carro trajeto
+    # relacionamento 1 carro para N trajetos
+    # cada trajeto tem apenas 1 carro
+    carro: Mapped['Carro'] = relationship(back_populates='trajeto')
 
-    # motorista: Mapped['Motorista'] = relationship('Motorista', back_populates='trajetos')
-    # embarcado: Mapped['Carro'] = relationship('Carro', back_populates='trajetos')
+    # relacionamento N pontos de trajeto para 1 trajeto
+    # cada trajeto pode ter vários pontos associados
+    # ao ser cadastrado um novo ponto de trajeto nesse campo, ele se comunica com a coluna estrangeira da tabela trajeto
+    trajeto_ponto: Mapped[list['PontoTrajeto']] = relationship()
 
 
