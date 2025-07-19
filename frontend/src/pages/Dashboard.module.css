@@ -1,81 +1,172 @@
 /* src/pages/Dashboard.module.css */
 
 .dashboardPage {
+    padding: 32px;
     background-color: var(--background);
+}
+
+/* --- Cabeçalho de Boas-vindas --- */
+.welcomeHeader {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e0e4e9;
+}
+
+.welcomeTitle {
+    color: var(--dark-text);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.welcomeSubtitle {
+    color: var(--medium-gray);
+    font-size: 1rem;
+}
+
+/* --- Card Principal (Mapa, Gráfico, Tabela) --- */
+.mainCard {
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    border: none;
+    overflow: hidden;
+}
+
+.mainCard :global(.card-header) {
+    background-color: var(--white);
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark-text);
+}
+
+.mainCard :global(.card-body) {
     padding: 24px;
 }
 
-.dashboardTitle {
-    color: var(--dark-text);
-    font-weight: 600;
+/* NOVO: Corpo do Card do Mapa */
+.mapCardBody {
+    padding: 0 !important;
+    /* Remove o padding para o mapa preencher tudo */
 }
 
+/* Garante que o container do mapa (gerado por react-leaflet ou outro) preencha o espaço */
+.mapCardBody>div {
+    height: 100%;
+    width: 100%;
+    border-bottom-left-radius: 16px;
+    /* Para casar com as bordas do card */
+    border-bottom-right-radius: 16px;
+}
+
+/* --- Grid de Estatísticas --- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Duas colunas */
+    gap: 16px;
+}
+
+/* --- Card de Estatística --- */
 .statCard {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     transition: all 0.3s ease;
-    overflow: hidden;
-    position: relative;
 }
 
 .statCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
 }
 
-.statCard :global(.card-body) {
-    position: relative;
-    z-index: 2;
+.statIconWrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
-.statCardIconBg {
-    position: absolute;
-    z-index: 1;
-    right: -20px;
-    bottom: -20px;
-    font-size: 6rem;
-    color: rgba(0, 0, 0, 0.05);
-    transform: rotate(-15deg);
+.statIcon {
+    font-size: 1.1rem;
+    color: var(--white);
 }
 
-.statCardTitle {
+.statInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.statTitle {
     text-transform: uppercase;
-    font-weight: bold;
-    font-size: 0.8rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--medium-gray);
+    margin-bottom: 2px;
 }
 
-.statCardValue {
-    font-size: 2rem;
+.statValue {
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--dark-text);
+    line-height: 1;
 }
 
-.total .statCardTitle {
-    color: var(--blue);
+/* Cores dos Ícones */
+.total .statIconWrapper {
+    background-color: var(--blue);
 }
 
-.online .statCardTitle {
-    color: var(--green);
+.online .statIconWrapper {
+    background-color: var(--green);
 }
 
-.routes .statCardTitle {
-    color: var(--yellow);
+/* --- Tabela de Veículos --- */
+.tableWrapper {
+    overflow-x: auto;
 }
 
-.alerts .statCardTitle {
-    color: var(--red);
+.vehicleTable {
+    margin-bottom: 0;
+    vertical-align: middle;
 }
 
-.mapCard {
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.vehicleTable th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--medium-gray);
+    background-color: #f8f9fa;
+    padding: 12px 24px;
     border: none;
 }
 
-.mapCard :global(.card-header) {
-    background-color: var(--white);
-    border-bottom: 1px solid #eee;
-    font-weight: 600;
-    color: var(--dark-text);
+.vehicleTable td {
+    padding: 16px 24px;
+    font-size: 0.95rem;
+    color: var(--dark-gray);
+}
+
+.vehicleTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.vehicleTable tbody tr:hover {
+    background-color: #f5f8fc;
+}
+
+.vehicleName {
+    color: var(--medium-gray);
+}
+
+.statusBadge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    font-weight: 500;
 }
