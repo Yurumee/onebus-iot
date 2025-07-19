@@ -4,7 +4,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Importe o novo layout
-import MainLayout from './components/layout/MainLayout';
+import MainLayout from './components/layout/mainLayout';
 
 // Importe suas páginas
 import Login from './pages/Login';
