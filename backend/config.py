@@ -1,9 +1,14 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 # from sqlalchemy import create_engine
 
-app = Flask(__name__, template_folder='../frontend/templates')
+app = Flask(__name__)
+
+# Cria a pasta 'database' se não existir
+db_folder = os.path.join(app.root_path, 'database')
+os.makedirs(db_folder, exist_ok=True)
 
 # configurando banco de dados sqlite
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/database/onebus.db'

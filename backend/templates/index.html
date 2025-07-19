@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>ONEBUS - Rotas de Teste</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f8f8; }
+        h1 { color: #2c3e50; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 12px 0; }
+        a { color: #2980b9; text-decoration: none; font-weight: bold; }
+        a:hover { text-decoration: underline; }
+        .desc { color: #555; font-size: 0.95em; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Rotas de Teste - ONEBUS</h1>
+    <ul>
+        <li>
+            <a href="/">/</a>
+            <span class="desc">Página principal da API (mensagem de boas-vindas)</span>
+        </li>
+        <li>
+            <a href="/carro/">/carro/</a>
+            <span class="desc">Cadastra carros mockados</span>
+        </li>
+        <li>
+            <a href="/cidadao/">/cidadao/</a>
+            <span class="desc">Cadastra cidadão mockado</span>
+        </li>
+        <li>
+            <a href="/cidadao/signin">/cidadao/signin</a>
+            <span class="desc">Autenticação de cidadão (GET/POST)</span>
+        </li>
+        <li>
+            <a href="/motorista/">/motorista/</a>
+            <span class="desc">Cadastra motorista mockado</span>
+        </li>
+        <li>
+            <a href="/motorista/motorista-carro">/motorista/motorista-carro</a>
+            <span class="desc">Associa carro mockado ao motorista mockado</span>
+        </li>
+        <li>
+            <a href="/trajeto/">/trajeto/</a>
+            <span class="desc">Cadastra trajeto mockado</span>
+        </li>
+        <li>
+            <a href="/trajeto/get-all-trajeto">/trajeto/get-all-trajeto</a>
+            <span class="desc">Exibe todos os trajetos cadastrados</span>
+        </li>
+        <li>
+            <a href="/trajeto/get-especific-trajeto">/trajeto/get-especific-trajeto</a>
+            <span class="desc">Exibe trajetos específicos com dados do motorista</span>
+        </li>
+    </ul>
+</body>
+</html>

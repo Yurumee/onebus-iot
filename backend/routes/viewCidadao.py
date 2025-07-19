@@ -1,36 +1,67 @@
 from config import app, db
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from models.cidadao import Cidadao
 
 view_cidadao = Blueprint('view_cidadao', __name__)
 
-@app.route('/cidadao')
+@view_cidadao.route('/')
 def home_cidadao():
-    # cnh = 1234567890
+    """
+    Rota para cadastrar um cidadão mockado no banco de dados.
+
+    Método:
+        GET
+
+    Retorno:
+        - status, message e dados do cidadão.
+        - status error se o cidadão já existe.
+    """
     cpf = '789.456.123-00'
     nome = 'Alice Mock'
     senhaTop = 'senhaforte123'
 
-    if Cidadao.query.filter_by(CPF=cpf).first():
-        return 'CIDADAO JÁ CADASTRADO'
+    cidadao_existente = Cidadao.query.filter_by(CPF=cpf).first()
+    if cidadao_existente:
+        return jsonify({
+            "status": "error",
+            "message": "Cidadão já cadastrado.",
+            "cpf": cpf,
+            "nome": cidadao_existente.nomeCompleto
+        }), 409
 
     MOCKCidadao = Cidadao(
-        # CNH=cnh,
         CPF=cpf,
         nomeCompleto=nome,
-        senha=senhaTop
+        senha=senhaTop,
+        tipoUsuario='cidadao'
     )
 
     db.session.add(MOCKCidadao)
     db.session.commit()
 
-    return "Página principal do cidadão"
+    return jsonify({
+        "status": "success",
+        "message": "Cidadão cadastrado com sucesso.",
+        "cpf": cpf,
+        "nome": nome
+    }), 201
 
 @app.route('/signin', methods=['GET', 'POST'])
 def singin():
-    # if request.method == 'POST':
-        # cpf = request.form.get('cpf')
-        # password = request.form.get('senha')
+    """
+    Rota para autenticação de cidadão.
+
+    Métodos:
+        GET, POST
+
+    Parâmetros esperados (via formulário):
+        - cpf: CPF do cidadão
+        - senha: Senha do cidadão
+
+    Retorno:
+        - status, message e dados do cidadão.
+        - status error se usuário não existir ou senha estiver incorreta.
+    """
     cpf = request.form.get('cpf')
     password = request.form.get('senha')
 
@@ -38,8 +69,21 @@ def singin():
 
     if user:
         if user.senha == password:
-            return 'SENHA OK'
+            return jsonify({
+                "status": "success",
+                "message": "Autenticação realizada com sucesso.",
+                "cpf": cpf,
+                "nome": user.nomeCompleto
+            }), 200
         else:
-            return 'ALGO DEU ERRADO'
+            return jsonify({
+                "status": "error",
+                "message": "Senha incorreta.",
+                "cpf": cpf
+            }), 401
 
-    return 'USUARIO NON ECZISTEH'
+    return jsonify({
+        "status": "error",
+        "message": "Usuário não encontrado.",
+        "cpf": cpf
+    }), 404
