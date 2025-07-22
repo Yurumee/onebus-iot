@@ -4,6 +4,7 @@ from routes.viewMotorista import view_motorista
 from routes.viewCidadao import view_cidadao
 from routes.viewCarro import view_carro
 from routes.viewTrajeto import view_trajeto
+from routes.viewViagem import view_viagem
 
 from models import *
 # from models.carro import Carro
@@ -15,6 +16,7 @@ app.register_blueprint(view_motorista, url_prefix='/motorista')
 app.register_blueprint(view_cidadao, url_prefix='/cidadao')
 app.register_blueprint(view_trajeto, url_prefix='/trajeto')
 app.register_blueprint(view_carro, url_prefix='/carro')
+app.register_blueprint(view_viagem, url_prefix='/viagem')
 
 if __name__ == '__main__':
     with app.app_context():

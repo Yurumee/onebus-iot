@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify, render_template
 # from sqlalchemy import select
 from datetime import datetime
 from models.trajeto import Trajeto
+from models.pontoTrajeto import PontoTrajeto
+from models.trajetos_cidadaos import TrajetosCidadaos
 from models.motorista import Motorista
 
 view_trajeto = Blueprint('view_trajeto', __name__)
@@ -25,6 +27,7 @@ def post_new_route():
         servicoPrestado='Saúde',
         pontoOrigem='Cerro Corá',
         pontoDestino='Currais Novos',
+        carro_placa='4N4L1C3',
         horarioEstimado=horarioComeco.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
         # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
@@ -81,3 +84,35 @@ def get_especific_trajeto():
     trajeto_teste = Trajeto.query(Trajeto.destino, Trajeto.origem, Motorista.nomeCompleto).join(Motorista).filter(Trajeto.motoristaResp == Motorista.CNH)
 
     return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste)
+
+@view_trajeto.route('/post-point', methods=['GET', 'POST'])
+def post_point_trajeto():
+    MOCKPontoTrajeto = PontoTrajeto(
+        latitude='-14.000001',
+        longitude='15.000002',
+        trajeto=1,
+        # horarioEstimado=horarioComeco.time()
+        # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
+        # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
+    )
+    
+    try:
+        db.session.add(MOCKPontoTrajeto)
+        db.session.commit()
+        return jsonify({
+            "status": "success",
+            "message": "Ponto de Trajeto inserido com sucesso.",
+            "trajeto": {
+                "latitude": MOCKPontoTrajeto.latitude,
+                "longitude": MOCKPontoTrajeto.longitude,
+                "id do trajeto": MOCKPontoTrajeto.trajeto,
+                # "horarioEstimado": str(MOCKTrajeto.horarioEstimado)
+                # "motoristaResp": MOCKTrajeto.motoristaResp,   # Inclua se existir
+                # "idEmbarcado": MOCKTrajeto.idEmbarcado        # Inclua se existir
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Erro ao inserir trajeto: {str(e)}"
+        }), 400

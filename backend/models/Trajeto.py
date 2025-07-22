@@ -8,6 +8,7 @@ from sqlalchemy import String, ForeignKey, Integer
 if TYPE_CHECKING:
     from models.carro import Carro
     from models.pontoTrajeto import PontoTrajeto
+    from models.cidadao import Cidadao
 
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'
@@ -31,5 +32,7 @@ class Trajeto(db.Model):
     # cada trajeto pode ter vários pontos associados
     # ao ser cadastrado um novo ponto de trajeto nesse campo, ele se comunica com a coluna estrangeira da tabela trajeto
     trajeto_ponto: Mapped[list['PontoTrajeto']] = relationship()
+
+    cidadaos: Mapped['Cidadao'] = relationship(secondary='trajetos_cidadaos')
 
 
