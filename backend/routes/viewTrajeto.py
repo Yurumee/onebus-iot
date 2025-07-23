@@ -1,5 +1,5 @@
 from config import db, app
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 # from sqlalchemy import select
 from datetime import datetime
 from models.trajeto import Trajeto
@@ -21,14 +21,28 @@ def post_new_route():
         - status, message e dados do trajeto.
         - status error se ocorrer exceção.
     """
-    horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
+    servico_prestado = request.form.get('servico-prestado')
+    origem = request.form.get('origem')
+    destino = request.form.get('destino')
+    placa = request.form.get('placa')
+    datahora_estimado = request.form.get('datahora-estimado')
+    # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
+    datahora_estimado_datetime = datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")
+
+    # servico_prestado = 'Saude'
+    # origem = 'Cerro Corá'
+    # destino = 'Currais Novos'
+    # placa = '4N4L1C3'
+    # datahora_estimado = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
+
+    # horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
     
     MOCKTrajeto = Trajeto(
-        servicoPrestado='Saúde',
-        pontoOrigem='Cerro Corá',
-        pontoDestino='Currais Novos',
-        carro_placa='4N4L1C3',
-        horarioEstimado=horarioComeco.time()
+        servicoPrestado=servico_prestado,
+        pontoOrigem=origem,
+        pontoDestino=destino,
+        carro_placa=placa,
+        horarioEstimado=datahora_estimado_datetime.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
         # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
     )
@@ -44,8 +58,6 @@ def post_new_route():
                 "pontoOrigem": MOCKTrajeto.pontoOrigem,
                 "pontoDestino": MOCKTrajeto.pontoDestino,
                 "horarioEstimado": str(MOCKTrajeto.horarioEstimado)
-                # "motoristaResp": MOCKTrajeto.motoristaResp,   # Inclua se existir
-                # "idEmbarcado": MOCKTrajeto.idEmbarcado        # Inclua se existir
             }
         }), 201
     except Exception as e:
@@ -87,9 +99,26 @@ def get_especific_trajeto():
 
 @view_trajeto.route('/post-point', methods=['GET', 'POST'])
 def post_point_trajeto():
+    """
+    Rota para postar pontos de um trajeto vindos do embarcado
+    
+    Método: 
+        POST
+
+    Retorno: 
+        Nenhum
+
+    OBS: O GET está presente apenas para debug. Necessário retirar
+    """
+
+    # data = request #Id do trajeto ao qual o ponto pertence
+    # trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
+    # latitude = request # latitude passada pelo embarcado
+    # longitude = request # longitude passada pelo embarcado
+
     id_trajeto = 1 #Id do trajeto ao qual o ponto pertence
     trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first()
-    print(trajeto_desejado.trajeto_ponto)
+    # print(trajeto_desejado.trajeto_ponto)
 
     MOCKPontoTrajeto = PontoTrajeto(
         latitude='-14.000026',

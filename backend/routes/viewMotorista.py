@@ -10,6 +10,12 @@ def cadastrar_motorista():
     """
     Rota para cadastrar um motorista mockado no banco de dados.
     """
+    # cnh = request.form.get('cnh') # Pega os dados enviados pelo body
+    # cpf = request.form.get('cpf') # Pega os dados enviados pelo body
+    # nome = request.form.get('nome-motorista') # Pega os dados enviados pelo body
+    # senhaTop = request.form.get('senha') # Pega os dados enviados pelo body
+    # tipoUsuario = request.form.get('tipo-usuario') # Pega os dados enviados pelo body
+
     cnh = 9876543210
     cpf = '321.456.789-00'
     nome = 'Alice Mock 2'
