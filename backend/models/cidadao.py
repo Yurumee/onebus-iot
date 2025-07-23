@@ -8,4 +8,4 @@ if TYPE_CHECKING:
 class Cidadao(db.Model, Usuario):
     __tablename__ = 'cidadao'
 
-    trajetos: Mapped['Trajeto'] = relationship(secondary='trajetos_cidadaos')
+    # trajetos: Mapped['Trajeto'] = relationship(secondary='trajetos_cidadaos', back_populates='cidadaos')

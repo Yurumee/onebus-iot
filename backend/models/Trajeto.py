@@ -33,6 +33,6 @@ class Trajeto(db.Model):
     # ao ser cadastrado um novo ponto de trajeto nesse campo, ele se comunica com a coluna estrangeira da tabela trajeto
     trajeto_ponto: Mapped[list['PontoTrajeto']] = relationship()
 
-    cidadaos: Mapped['Cidadao'] = relationship(secondary='trajetos_cidadaos')
+    # cidadaos: Mapped['Cidadao'] = relationship(secondary='trajetos_cidadaos', back_populates='trajetos')
 
 

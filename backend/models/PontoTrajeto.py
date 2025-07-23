@@ -1,10 +1,11 @@
 from config import db
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey, Integer
 
 if TYPE_CHECKING:
     from models.trajeto import Trajeto
+    from models.cidadao import Cidadao
 
 class PontoTrajeto(db.Model):
     __tablename__ = 'ponto_trajeto'
@@ -21,3 +22,5 @@ class PontoTrajeto(db.Model):
     # relacionamento 1 trajeto para N pontos
     # cada ponto tem apenas 1 trajeto
     trajeto: Mapped['Trajeto'] = relationship(back_populates='trajeto_ponto')
+    # trajeto: Mapped['Trajeto'] = relationship(backref='ponto_trajeto')
+    

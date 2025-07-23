@@ -87,15 +87,19 @@ def get_especific_trajeto():
 
 @view_trajeto.route('/post-point', methods=['GET', 'POST'])
 def post_point_trajeto():
+    id_trajeto = 1 #Id do trajeto ao qual o ponto pertence
+    trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first()
+    print(trajeto_desejado.trajeto_ponto)
+
     MOCKPontoTrajeto = PontoTrajeto(
-        latitude='-14.000001',
-        longitude='15.000002',
-        trajeto=1,
+        latitude='-14.000026',
+        longitude='15.000047',
+        trajeto=trajeto_desejado,
         # horarioEstimado=horarioComeco.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
         # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
     )
-    
+
     try:
         db.session.add(MOCKPontoTrajeto)
         db.session.commit()
@@ -105,7 +109,7 @@ def post_point_trajeto():
             "trajeto": {
                 "latitude": MOCKPontoTrajeto.latitude,
                 "longitude": MOCKPontoTrajeto.longitude,
-                "id do trajeto": MOCKPontoTrajeto.trajeto,
+                "id do trajeto": MOCKPontoTrajeto.trajeto_id,
                 # "horarioEstimado": str(MOCKTrajeto.horarioEstimado)
                 # "motoristaResp": MOCKTrajeto.motoristaResp,   # Inclua se existir
                 # "idEmbarcado": MOCKTrajeto.idEmbarcado        # Inclua se existir
