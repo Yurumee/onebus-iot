@@ -111,19 +111,21 @@ def post_point_trajeto():
     OBS: O GET está presente apenas para debug. Necessário retirar
     """
 
-    # data = request #Id do trajeto ao qual o ponto pertence
+    data = request.get_json() #Id do trajeto ao qual o ponto pertence
     # trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
-    # latitude = request # latitude passada pelo embarcado
-    # longitude = request # longitude passada pelo embarcado
+    latitude_embarcado = data.get('latitude') # latitude passada pelo embarcado
+    longitude_embarcado = data.get('longitude') # longitude passada pelo embarcado
 
     id_trajeto = 1 #Id do trajeto ao qual o ponto pertence
     trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first()
     # print(trajeto_desejado.trajeto_ponto)
 
     MOCKPontoTrajeto = PontoTrajeto(
-        latitude='-14.000026',
-        longitude='15.000047',
-        trajeto=trajeto_desejado,
+        # latitude='-14.000026', # Dado mockado
+        # longitude='15.000047', # Dado mockado
+        latitude=latitude_embarcado,
+        longitude=longitude_embarcado,
+        trajeto=trajeto_desejado, 
         # horarioEstimado=horarioComeco.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
         # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
