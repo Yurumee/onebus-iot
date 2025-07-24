@@ -19,12 +19,14 @@ export default function Index() {
 
         <Text style={styles.nome}>{dadosUsuario.nome}</Text> {/* ALTERAR */}
 
+        <Text style={styles.nome}>Trajeto Selecionado (linha ilustrativa para teste): {authContext.trajetoId}</Text> {/* REMOVER */}
+
         <TouchableHighlight underlayColor={'#D9BD3F'} style={styles.botaoMapa} onPress={() => {}}>
             <Text style={styles.textoBotao}>VER MAPA</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => router.replace('/motorista',{})}>
-            <Text style={styles.textoBotao}>SELECIONAR MOTORISTA</Text>
+        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => router.replace('/trajeto',{})}>
+            <Text style={styles.textoBotao}>SELECIONAR TRAJETO</Text>
         </TouchableHighlight>
 
         <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.botao} onPress={() => {}}>

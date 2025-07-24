@@ -13,12 +13,14 @@ export default function Index() {
     {
         id: 1,
         origem: 'Rua 1',
-        destino: 'Rua 2'
+        destino: 'Rua 2',
+        veiculo: 'FOI2E50'
     },
     {
         id: 2,
         origem: 'Rua 3',
-        destino: 'Rua 4'
+        destino: 'Rua 4',
+        veiculo: 'SAO8E40'
     }
   ]
 
@@ -26,7 +28,7 @@ export default function Index() {
     <View style={styles.bg}>
       <View style={styles.container}>
         {/* ALTERAR onPress para remover o trajeto do contexto */}
-        <TouchableHighlight underlayColor={'#FFFFFF'} style={styles.fechar} onPress={() => router.replace('/motorista',{})}>
+        <TouchableHighlight underlayColor={'#FFFFFF'} style={styles.fechar} onPress={() => router.replace('/',{})}>
           <FontAwesome name='close' size={28} />
         </TouchableHighlight>
         <Text style={styles.titulo}>SELECIONE SEU <Text style={styles.destaque}>TRAJETO</Text></Text>
@@ -41,6 +43,7 @@ export default function Index() {
                                 <View>
                                     <Text>Origem: {item.origem}</Text> {/* ALTERAR */}
                                     <Text>Destino: {item.destino}</Text> {/* ALTERAR */}
+                                    <Text>Placa do veículo: {item.veiculo}</Text> {/* ALTERAR */}
                                 </View>
                             </View>
                         </TouchableHighlight>
