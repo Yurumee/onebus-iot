@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 # from sqlalchemy import create_engine
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend/templates/')
 
 # Cria a pasta 'database' se não existir
 db_folder = os.path.join(app.root_path, 'database')

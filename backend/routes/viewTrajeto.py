@@ -97,7 +97,7 @@ def get_especific_trajeto():
 
     return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste)
 
-@view_trajeto.route('/post-point', methods=['GET', 'POST'])
+@view_trajeto.route('/post-point', methods=['POST'])
 def post_point_trajeto():
     """
     Rota para postar pontos de um trajeto vindos do embarcado
@@ -111,41 +111,43 @@ def post_point_trajeto():
     OBS: O GET está presente apenas para debug. Necessário retirar
     """
 
-    data = request.get_json() #Id do trajeto ao qual o ponto pertence
-    # trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
+    data = request.get_json() # todos os dados recebidos do embarcado
     latitude_embarcado = data.get('latitude') # latitude passada pelo embarcado
     longitude_embarcado = data.get('longitude') # longitude passada pelo embarcado
+    id_trajeto = int(data.get('id-trajeto')) # id do trajeto ao qual o ponto pertence
 
-    id_trajeto = 1 #Id do trajeto ao qual o ponto pertence
-    trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first()
-    # print(trajeto_desejado.trajeto_ponto)
+    # id_trajeto = 1 # mock do id do trajeto ao qual o ponto pertence
+    trajeto_desejado = Trajeto.query.filter_by(idTrajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
+    # print(trajeto_desejado.trajeto_ponto) # debug
 
     MOCKPontoTrajeto = PontoTrajeto(
-        # latitude='-14.000026', # Dado mockado
-        # longitude='15.000047', # Dado mockado
+        # latitude='-14.000026', # dado mockado
+        # longitude='15.000047', # dado mockado
         latitude=latitude_embarcado,
         longitude=longitude_embarcado,
-        trajeto=trajeto_desejado, 
-        # horarioEstimado=horarioComeco.time()
-        # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
-        # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
+        trajeto=trajeto_desejado
     )
 
     try:
         db.session.add(MOCKPontoTrajeto)
         db.session.commit()
-        return jsonify({
-            "status": "success",
-            "message": "Ponto de Trajeto inserido com sucesso.",
-            "trajeto": {
-                "latitude": MOCKPontoTrajeto.latitude,
-                "longitude": MOCKPontoTrajeto.longitude,
-                "id do trajeto": MOCKPontoTrajeto.trajeto_id,
-                # "horarioEstimado": str(MOCKTrajeto.horarioEstimado)
-                # "motoristaResp": MOCKTrajeto.motoristaResp,   # Inclua se existir
-                # "idEmbarcado": MOCKTrajeto.idEmbarcado        # Inclua se existir
-            }
-        }), 201
+
+        '''
+            NÃO POSSUI RETURN
+        '''
+        return 201
+
+        # return jsonify({
+        #     "status": "success",
+        #     "message": "Ponto de Trajeto inserido com sucesso.",
+        #     "trajeto": {
+        #         "latitude": MOCKPontoTrajeto.latitude,
+        #         "longitude": MOCKPontoTrajeto.longitude,
+        #         "id do trajeto": MOCKPontoTrajeto.trajeto_id,
+        #         # "horarioEstimado": str(MOCKTrajeto.horarioEstimado) # caso exista, descomentar
+        #     }
+        # }), 201
+        
     except Exception as e:
         return jsonify({
             "status": "error",

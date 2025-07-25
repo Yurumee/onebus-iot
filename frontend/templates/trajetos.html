@@ -6,16 +6,29 @@
     <h1>Teste de rotas</h1>
 
     {% for trajeto in all_trajetos %}
+    
+    <h3>ID:</h3>
+    {{ trajeto.idTrajeto }}
+    <br>
+
+    <h3>Serviço prestado:</h3>
+    {{ trajeto.servicoPrestado }}
+    <br>
+    
     <h3>Origem:</h3> 
-    {{ trajeto.origem }}
+    {{ trajeto.pontoOrigem }}
     <br>
     
     <h3>Destino:</h3>
-    {{ trajeto.destino }}
+    {{ trajeto.pontoDestino }}
     <br>
     
-    <h3>Motorista Responsável:</h3>
-    {{ trajeto.motoristaResp }}
+    <h3>Horário estimado:</h3>
+    {{ trajeto.horarioEstimado }}
+    <br>
+
+    <h3>Placa do carro:</h3>
+    {{ trajeto.carro_placa }}
     <br>
     
     {% endfor %}
