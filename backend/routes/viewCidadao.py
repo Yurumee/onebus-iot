@@ -5,7 +5,7 @@ from models.cidadao import Cidadao
 view_cidadao = Blueprint('view_cidadao', __name__)
 
 @view_cidadao.route('/')
-def home_cidadao():
+def post_new_cidadao():
     """
     Rota para cadastrar um cidadão mockado no banco de dados.
 
@@ -20,7 +20,7 @@ def home_cidadao():
     nome = 'Alice Mock'
     senhaTop = 'senhaforte123'
 
-    cidadao_existente = Cidadao.query.filter_by(CPF=cpf).first()
+    cidadao_existente = Cidadao.query.filter_by(cpf=cpf).first()
     if cidadao_existente:
         return jsonify({
             "status": "error",
@@ -30,7 +30,7 @@ def home_cidadao():
         }), 409
 
     MOCKCidadao = Cidadao(
-        CPF=cpf,
+        cpf=cpf,
         nomeCompleto=nome,
         senha=senhaTop,
         tipoUsuario='cidadao'
@@ -55,7 +55,7 @@ def singin():
         GET, POST
 
     Parâmetros esperados (via formulário):
-        - cpf: CPF do cidadão
+        - cpf: cpf do cidadão
         - senha: Senha do cidadão
 
     Retorno:
@@ -65,7 +65,7 @@ def singin():
     cpf = request.form.get('cpf')
     password = request.form.get('senha')
 
-    user = Cidadao.query.filter_by(CPF=cpf).first()
+    user = Cidadao.query.filter_by(cpf=cpf).first()
 
     if user:
         if user.senha == password:

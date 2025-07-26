@@ -8,7 +8,7 @@ from models.pontoViagem import PontoViagem
 view_viagem = Blueprint('view_viagem', __name__)
 
 @view_viagem.route('/', methods=['GET', 'POST'])
-def post_point_viagem():
+def post_ponto_viagem():
     """
     Rota para cadastrar um ponto de viagem mockado no banco de dados.
 

@@ -1,12 +1,12 @@
 from config import app, db
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from models.motorista import Motorista
 from models.carro import Carro
 
 view_motorista = Blueprint('view_motorista', __name__)
 
 @view_motorista.route('/', methods=['GET', 'POST'])
-def cadastrar_motorista():
+def post_new_motorista():
     """
     Rota para cadastrar um motorista mockado no banco de dados.
     """
@@ -17,12 +17,12 @@ def cadastrar_motorista():
     # tipoUsuario = request.form.get('tipo-usuario') # Pega os dados enviados pelo body
 
     cnh = 9876543210
-    cpf = '123.456.789-00'
+    cpf = '321.456.789-00'
     nome = 'Alice Mock 2'
     senhaTop = 'senhamuitoforte123'
     tipoUsuario = 'motorista'
 
-    motorista_existente = Motorista.query.filter_by(CPF=cpf).first()
+    motorista_existente = Motorista.query.filter_by(cpf=cpf).first()
     if motorista_existente:
         return jsonify({
             "status": "error",
@@ -33,7 +33,7 @@ def cadastrar_motorista():
 
     MOCKtorista = Motorista(
         cnh=cnh,
-        CPF=cpf,
+        cpf=cpf,
         nomeCompleto=nome,
         senha=senhaTop,
         tipoUsuario=tipoUsuario
@@ -49,8 +49,45 @@ def cadastrar_motorista():
         "nome": nome
     }), 201
 
+@view_motorista.route('/excluir-motorista', methods=['GET', 'POST'])
+def delete_motorista():
+    """
+    Rota para deletar um motorista específico com o cpf informado
+
+    Método:
+        Get, Post
+
+    Retorno:
+        Página indicando motorista deletado
+    """
+    if request.method == 'POST':
+        cpf_motorista = request.form.get('motorista-cpf')
+        motorista = Motorista.query.filter_by(cpf=cpf_motorista).first()
+
+        if motorista:
+            try:
+                Motorista.query.filter_by(cpf=cpf_motorista).delete()
+                db.session.commit()
+                return jsonify({
+                    "status":"success",
+                    "message":"motorista deletado com sucesso"
+                }), 200
+            
+            except Exception as e:
+                return jsonify({
+                    "status":"error",
+                    "message":f"erro ao deletar motorista: {str(e)}"
+                })
+        else:
+            return jsonify({
+                "status":"success",
+                "message":"motorista não existe"
+            }), 204
+        
+    return render_template('motoristas.html'), 302
+
 @view_motorista.route('/motorista-carro', methods=['GET', 'POST'])
-def incluir_carro():
+def register_carro():
     """
     Rota para associar um carro mockado a um motorista mockado.
     """

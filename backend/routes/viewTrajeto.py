@@ -10,7 +10,7 @@ from models.motorista import Motorista
 view_trajeto = Blueprint('view_trajeto', __name__)
 
 @view_trajeto.route('/', methods=['GET', 'POST'])
-def post_new_route():
+def post_new_trajeto():
     """
     Rota para cadastrar um trajeto mockado no banco de dados.
 
@@ -115,7 +115,7 @@ def get_especific_trajeto():
                     }), 404
 
 @view_trajeto.route('/post-point', methods=['POST'])
-def post_point_trajeto():
+def post_ponto_trajeto():
     """
     Rota para postar pontos de um trajeto vindos do embarcado
     
