@@ -25,9 +25,9 @@ def post_new_route():
     origem = request.form.get('origem')
     destino = request.form.get('destino')
     placa = request.form.get('placa')
-    datahora_estimado = request.form.get('datahora-estimado')
-    # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
-    datahora_estimado_datetime = datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")
+    datahora_estimado = datetime.strptime(request.form.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
+    # # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
+    # datahora_estimado_datetime = datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S") # Testes
 
     # servico_prestado = 'Saude'
     # origem = 'Cerro Corá'
@@ -42,7 +42,7 @@ def post_new_route():
         pontoOrigem=origem,
         pontoDestino=destino,
         carro_placa=placa,
-        horarioEstimado=datahora_estimado_datetime.time()
+        horarioEstimado=datahora_estimado.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
         # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
     )
@@ -84,7 +84,7 @@ def get_trajeto():
 @view_trajeto.route('/get-especific-trajeto', methods=['GET'])
 def get_especific_trajeto():
     """
-    Rota para exibir trajetos específicos com informações do motorista.
+    Rota para exibir trajetos específicos com informações de  um motorista específico.
 
     Método:
         GET
@@ -92,10 +92,27 @@ def get_especific_trajeto():
     Retorno:
         Renderiza o template 'trajetos_motorista.html' com trajetos filtrados e dados do motorista.
     """
-    # trajeto_teste = Trajeto.query(Trajeto.destino, Trajeto.origem, Motorista.nomeCompleto).filter(Trajeto.motoristaResp == Motorista.CNH)
-    trajeto_teste = Trajeto.query(Trajeto.destino, Trajeto.origem, Motorista.nomeCompleto).join(Motorista).filter(Trajeto.motoristaResp == Motorista.CNH)
+    cnh_desejado = request.form.get('motorista-cnh')
+    motorista_desejado = Motorista.query.filter_by(cnh=cnh_desejado).first()
 
-    return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste)
+    if motorista_desejado:
+        try:
+            trajeto_teste = db.session.query(Trajeto, Motorista).join(Motorista, Trajeto.carro_placa == Motorista.carro_placa).all()
+            print(trajeto_teste)
+            
+        except Exception as e:
+            return jsonify({
+            "status": "error",
+            "message": f"Erro ao inserir trajeto: {str(e)}"
+        }), 400
+
+        return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste), 302
+    
+    else:
+        return jsonify({
+                    "status":"error",
+                    "message":"motorista nao encontrado"
+                    }), 404
 
 @view_trajeto.route('/post-point', methods=['POST'])
 def post_point_trajeto():

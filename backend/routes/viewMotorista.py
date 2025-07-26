@@ -17,7 +17,7 @@ def cadastrar_motorista():
     # tipoUsuario = request.form.get('tipo-usuario') # Pega os dados enviados pelo body
 
     cnh = 9876543210
-    cpf = '321.456.789-00'
+    cpf = '123.456.789-00'
     nome = 'Alice Mock 2'
     senhaTop = 'senhamuitoforte123'
     tipoUsuario = 'motorista'
@@ -55,7 +55,7 @@ def incluir_carro():
     Rota para associar um carro mockado a um motorista mockado.
     """
     cnh_motorista = 9876543210
-    placa_motorista = '4N4L1C3'
+    placa_motorista = 'S54NT05'
 
     motorista = Motorista.query.filter_by(cnh=cnh_motorista).first()
     carro_desejado = Carro.query.filter_by(placa=placa_motorista).first()
