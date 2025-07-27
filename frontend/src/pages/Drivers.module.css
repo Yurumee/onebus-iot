@@ -1,56 +1,70 @@
 .driversPage {
     padding: 32px;
-    background-color: var(--background);
+    background-color: #f8f9fa; /* Um cinza um pouco mais claro */
 }
 
 /* --- Cabeçalho da Página --- */
 .pageHeader {
     margin-bottom: 32px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #e0e4e9;
 }
-
 .pageTitle {
-    color: var(--dark-text);
+    color: #212529; /* Cor de texto mais escura */
     font-weight: 700;
     font-size: 2rem;
 }
-
 .pageSubtitle {
-    color: var(--medium-gray);
+    color: #6c757d;
     font-size: 1rem;
 }
 
-/* --- Card Principal (Tabela) --- */
+/* --- Card Principal e de Stats --- */
 .mainCard {
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    border-radius: 12px; /* Bordas um pouco menos arredondadas */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border: none;
     overflow: hidden;
 }
 
-.mainCard :global(.card-header) {
-    background-color: var(--white);
-    padding: 16px 24px;
-    border-bottom: 1px solid #f0f2f5;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--dark-text);
-}
-
-.cardHeaderContent {
+/* Estilos refinados para o cabeçalho do Card */
+.cardHeader {
+    background-color: #fff !important;
+    padding: 16px 24px !important;
+    border-bottom: 1px solid #dee2e6 !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
-/* --- Grid e Cards de Estatísticas --- */
-.statsGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+.cardTitle {
+    margin-bottom: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.cardHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.searchInputWrapper {
+    position: relative;
+}
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+}
+.searchInput {
+    padding-left: 36px !important;
+    border-radius: 8px !important;
+    border-color: #ced4da !important;
+}
+.searchInput:focus {
+    border-color: #80bdff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
 }
 
+/* Cards de Estatísticas */
 .statCard {
     background-color: var(--white);
     border-radius: 12px;
@@ -58,104 +72,101 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: all 0.3s ease;
-    border: 1px solid #f0f2f5;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid #e9ecef;
 }
-
 .statCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
-
 .statIconWrapper {
     width: 48px;
     height: 48px;
-    border-radius: 8px;
+    border-radius: 50%; /* Ícones redondos */
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
-
-.statIcon {
-    font-size: 1.2rem;
-    color: var(--white);
-}
-
-.statInfo {
-    display: flex;
-    flex-direction: column;
-}
-
+.statIcon { font-size: 1.2rem; color: var(--white); }
+.statInfo { display: flex; flex-direction: column; }
 .statTitle {
     text-transform: uppercase;
     font-weight: 600;
     font-size: 0.75rem;
     color: var(--medium-gray);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
-
 .statValue {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--dark-text);
-    line-height: 1;
 }
-
-/* Cores dos Ícones */
-.total .statIconWrapper {
-    background-color: var(--blue);
-}
-
-.online .statIconWrapper {
-    background-color: var(--green);
-}
-
-.vehicles .statIconWrapper {
-    background-color: var(--yellow);
-    color: var(--dark-text);
-}
+.total .statIconWrapper { background-color: #0d6efd; }
+.online .statIconWrapper { background-color: #198754; }
+.vehicles .statIconWrapper { background-color: #ffc107; }
 
 /* --- Tabela Customizada --- */
 .tableWrapper {
     overflow-x: auto;
 }
-
 .customTable {
     margin-bottom: 0;
     vertical-align: middle;
 }
-
 .customTable th {
     font-weight: 600;
     font-size: 0.8rem;
     text-transform: uppercase;
-    color: var(--medium-gray);
+    color: #6c757d;
     background-color: #f8f9fa;
     padding: 12px 24px;
     border: none;
 }
-
 .customTable td {
     padding: 16px 24px;
     font-size: 0.95rem;
-    color: var(--dark-gray);
+    color: #495057;
+    border-color: #e9ecef;
 }
-
-.customTable tbody tr {
-    transition: background-color 0.2s ease;
-}
-
 .customTable tbody tr:hover {
-    background-color: #f5f8fc;
+    background-color: #f1f3f5;
+}
+.plateBadge {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    font-weight: 500;
 }
 
+/* Botões de Ação refinados */
 .actionButton {
-    margin-right: 8px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50% !important; /* Botões redondos */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    background-color: #f1f3f5;
+    border: none;
+    transition: all 0.2s;
+    margin: 0 4px;
+}
+.actionButton:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+.actionButtonDanger:hover {
+    background-color: #dc3545;
+    color: white;
 }
 
-.actionButton:last-child {
-    margin-right: 0;
+/* --- Modais Refinados --- */
+.modalHeader {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+.modalFooter {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
 }
