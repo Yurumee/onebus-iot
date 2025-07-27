@@ -6,30 +6,33 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey, Integer
 
 if TYPE_CHECKING:
-    from models.Motorista import Motorista
-    from models.Carro import Carro
+    from models.carro import Carro
+    from models.pontoTrajeto import PontoTrajeto
+    from models.cidadao import Cidadao
 
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'
 
     idTrajeto: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    servicoPrestado: Mapped[str] = mapped_column(String(50), nullable=False)
-    origem: Mapped[str] = mapped_column(String(50), nullable=False)
-    destino: Mapped[str] = mapped_column(String(50), nullable=False)
-    kmEstimado: Mapped[str] = mapped_column(String(50), nullable=False)
-    horarioInicio: Mapped[datetime.time] = mapped_column()
-    horarioFim: Mapped[datetime.time] = mapped_column()
+    servicoPrestado: Mapped[str] = mapped_column(String(50))
+    pontoOrigem: Mapped[str] = mapped_column(String(50))
+    pontoDestino: Mapped[str] = mapped_column(String(50))
+    horarioEstimado: Mapped[datetime.time] = mapped_column()
+    
+    # coluna de chave estrangeira
+    carro_placa: Mapped[str] = mapped_column(ForeignKey('carro.placa'))
 
+    # relacionamento para acesso na via contrária
+    # se comunica com o relacionamento com Carro trajeto
+    # relacionamento 1 carro para N trajetos
+    # cada trajeto tem apenas 1 carro
+    carro: Mapped['Carro'] = relationship(back_populates='trajeto')
 
-    # trajeto com um motorista
-    # um motorista pode ter varios trajetos
-    motoristaResp: Mapped[int] = mapped_column(Integer, ForeignKey('motorista.CNH'))
+    # relacionamento N pontos de trajeto para 1 trajeto
+    # cada trajeto pode ter vários pontos associados
+    # ao ser cadastrado um novo ponto de trajeto nesse campo, ele se comunica com a coluna estrangeira da tabela trajeto
+    trajeto_ponto: Mapped[list['PontoTrajeto']] = relationship()
 
-    # trajeto com apenas um embarcado
-    # um embarcado pode ter varios trajetos 
-    idEmbarcado: Mapped[str] = mapped_column(String, ForeignKey('carro.idEmbarcado'))
-
-    motorista: Mapped['Motorista'] = relationship('Motorista', back_populates='trajetos')
-    embarcado: Mapped['Carro'] = relationship('Carro', back_populates='trajetos')
+    # cidadaos: Mapped['Cidadao'] = relationship(secondary='trajetos_cidadaos', back_populates='trajetos')
 
 

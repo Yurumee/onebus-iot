@@ -1,3 +1,4 @@
 __pycache__
 mobile/node_modules
 mobile/.gitignore
+onebus.db

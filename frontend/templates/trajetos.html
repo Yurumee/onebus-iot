@@ -1,0 +1,36 @@
+{% extends "template_basis.html" %}
+
+{% block title %}Tela de Testes - Rotas{% endblock %}
+
+{% block content %}
+    <h1>Teste de rotas</h1>
+
+    {% for trajeto in all_trajetos %}
+    
+    <h3>ID:</h3>
+    {{ trajeto.idTrajeto }}
+    <br>
+
+    <h3>Serviço prestado:</h3>
+    {{ trajeto.servicoPrestado }}
+    <br>
+    
+    <h3>Origem:</h3> 
+    {{ trajeto.pontoOrigem }}
+    <br>
+    
+    <h3>Destino:</h3>
+    {{ trajeto.pontoDestino }}
+    <br>
+    
+    <h3>Horário estimado:</h3>
+    {{ trajeto.horarioEstimado }}
+    <br>
+
+    <h3>Placa do carro:</h3>
+    {{ trajeto.carro_placa }}
+    <br>
+    
+    {% endfor %}
+    
+{% endblock %}
