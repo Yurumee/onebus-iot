@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Table, Button, Badge, Form, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faTruck, faUserCheck, faSearch, faEdit, faTrashAlt, faPlus, faCar, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faTruck, faUserCheck, faSearch, faEdit, faTrashAlt, faPlus, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './Drivers.module.css';
 
@@ -43,6 +43,7 @@ function Drivers() {
   const [showNewModal, setShowNewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showNewVehicleModal, setShowNewVehicleModal] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState(null);
 
   const handleShowNewModal = () => setShowNewModal(true);
@@ -66,6 +67,9 @@ function Drivers() {
     setSelectedDriver(null);
   };
 
+  const handleShowNewVehicleModal = () => setShowNewVehicleModal(true);
+  const handleCloseNewVehicleModal = () => setShowNewVehicleModal(false);
+
   const handleSaveChanges = () => {
     console.log("Salvando alterações para:", selectedDriver);
     handleCloseEditModal();
@@ -80,6 +84,11 @@ function Drivers() {
     console.log("Deletando motorista:", selectedDriver);
     handleCloseDeleteModal();
   };
+
+  const handleCreateVehicle = () => {
+    console.log("Criando novo veículo...");
+    handleCloseNewVehicleModal();
+  }
 
   const getDriverName = (driverId) => {
     if (!driverId) return null;
@@ -138,12 +147,12 @@ function Drivers() {
                         <td><Badge pill bg={driver.status === 'Ativo' ? 'success' : 'secondary'}>{driver.status}</Badge></td>
                         <td className="text-center">
                           <OverlayTrigger overlay={<Tooltip>Editar</Tooltip>}>
-                            <Button variant="light" className={styles.actionButton} onClick={() => handleShowEditModal(driver)}>
+                            <Button variant="light" className={`${styles.actionButton} ${styles.actionButtonEdit}`} onClick={() => handleShowEditModal(driver)}>
                               <FontAwesomeIcon icon={faEdit} />
                             </Button>
                           </OverlayTrigger>
                           <OverlayTrigger overlay={<Tooltip>Excluir</Tooltip>}>
-                            <Button variant="light" className={`${styles.actionButton} ${styles.actionButtonDanger}`} onClick={() => handleShowDeleteModal(driver)}>
+                            <Button variant="light" className={`${styles.actionButton} ${styles.actionButtonDelete}`} onClick={() => handleShowDeleteModal(driver)}>
                               <FontAwesomeIcon icon={faTrashAlt} />
                             </Button>
                           </OverlayTrigger>
@@ -160,6 +169,7 @@ function Drivers() {
             <Card className={`${styles.mainCard} h-100`}>
               <Card.Header className={styles.cardHeader}>
                 <h5 className={styles.cardTitle}>Frota de Veículos</h5>
+                <Button variant="outline-primary" size="sm" onClick={handleShowNewVehicleModal}><FontAwesomeIcon icon={faPlus} className="me-1" /> Novo</Button>
               </Card.Header>
               <div className={styles.tableWrapper}>
                 <Table hover responsive className={styles.customTable}>
@@ -235,11 +245,11 @@ function Drivers() {
                 </Form.Select>
               </Form.Group>
             </Form>
+            <Modal.Footer className={styles.modalFooter}>
+              <Button variant="secondary" onClick={handleCloseEditModal}>Cancelar</Button>
+              <Button variant="primary" onClick={handleSaveChanges}>Salvar Alterações</Button>
+            </Modal.Footer>
           </Modal.Body>
-          <Modal.Footer className={styles.modalFooter}>
-            <Button variant="secondary" onClick={handleCloseEditModal}>Cancelar</Button>
-            <Button variant="primary" onClick={handleSaveChanges}>Salvar Alterações</Button>
-          </Modal.Footer>
         </Modal>
       )}
 
@@ -259,6 +269,37 @@ function Drivers() {
           </Modal.Footer>
         </Modal>
       )}
+
+      <Modal show={showNewVehicleModal} onHide={handleCloseNewVehicleModal} centered>
+        <Modal.Header closeButton className={styles.modalHeader}>
+          <Modal.Title><FontAwesomeIcon icon={faTruck} className="me-2" />Cadastrar Novo Veículo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formNewVehiclePlate">
+              <Form.Label>Placa do Veículo</Form.Label>
+              <Form.Control type="text" placeholder="Ex: ABC-1234" autoFocus />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formNewVehicleName">
+              <Form.Label>Nome/Modelo do Veículo</Form.Label>
+              <Form.Control type="text" placeholder="Ex: Ônibus 04" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formNewVehicleType">
+              <Form.Label>Tipo</Form.Label>
+              <Form.Select>
+                <option>Ônibus</option>
+                <option>Van</option>
+                <option>Carro</option>
+              </Form.Select>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer className={styles.modalFooter}>
+          <Button variant="secondary" onClick={handleCloseNewVehicleModal}>Cancelar</Button>
+          <Button variant="primary" onClick={handleCreateVehicle}>Salvar</Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 }
