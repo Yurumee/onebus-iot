@@ -1,0 +1,161 @@
+.driversPage {
+    padding: 32px;
+    background-color: var(--background);
+}
+
+/* --- Cabeçalho da Página --- */
+.pageHeader {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e0e4e9;
+}
+
+.pageTitle {
+    color: var(--dark-text);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.pageSubtitle {
+    color: var(--medium-gray);
+    font-size: 1rem;
+}
+
+/* --- Card Principal (Tabela) --- */
+.mainCard {
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    border: none;
+    overflow: hidden;
+}
+
+.mainCard :global(.card-header) {
+    background-color: var(--white);
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark-text);
+}
+
+.cardHeaderContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Grid e Cards de Estatísticas --- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.statCard {
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    border: 1px solid #f0f2f5;
+}
+
+.statCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+.statIconWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.statIcon {
+    font-size: 1.2rem;
+    color: var(--white);
+}
+
+.statInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.statTitle {
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--medium-gray);
+    margin-bottom: 4px;
+}
+
+.statValue {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    line-height: 1;
+}
+
+/* Cores dos Ícones */
+.total .statIconWrapper {
+    background-color: var(--blue);
+}
+
+.online .statIconWrapper {
+    background-color: var(--green);
+}
+
+.vehicles .statIconWrapper {
+    background-color: var(--yellow);
+    color: var(--dark-text);
+}
+
+/* --- Tabela Customizada --- */
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.customTable {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.customTable th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--medium-gray);
+    background-color: #f8f9fa;
+    padding: 12px 24px;
+    border: none;
+}
+
+.customTable td {
+    padding: 16px 24px;
+    font-size: 0.95rem;
+    color: var(--dark-gray);
+}
+
+.customTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.customTable tbody tr:hover {
+    background-color: #f5f8fc;
+}
+
+.actionButton {
+    margin-right: 8px;
+    width: 32px;
+    height: 32px;
+}
+
+.actionButton:last-child {
+    margin-right: 0;
+}
