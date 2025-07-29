@@ -7,8 +7,9 @@ type AuthState = {
     isLoggedIn: boolean,
     isReady: boolean,
     cpf: any,
+    nome: any,
     trajetoId: any,
-    logIn: (cpf:any) => void,
+    logIn: (cpf:any, nome:any) => void,
     logOut: () => void,
     escolherTrajeto: (trajetoId:any) => void
 };
@@ -20,8 +21,9 @@ export const AuthContext = createContext<AuthState>({
     isLoggedIn: false,
     isReady: false,
     cpf: '',
+    nome: '',
     trajetoId: '',
-    logIn: (cpf:any) => {},
+    logIn: (cpf:any, nome:any) => {},
     logOut: () => {},
     escolherTrajeto: (trajetoId:any) => {}
 });
@@ -30,10 +32,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const [isReady, setIsReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [cpf, setCpf] = useState('');
+    const [nome, setNome] = useState('');
     const [trajetoId, setTrajetoId] = useState('');
     const router = useRouter();
 
-    const storeAuthState = async (newState: {isLoggedIn: boolean, cpf: any}) => {
+    const storeAuthState = async (newState: {isLoggedIn: boolean, cpf: any, nome: any}) => {
         try {
             const jsonValue = JSON.stringify(newState);
             await AsyncStorage.setItem(authStorageKey, jsonValue);
@@ -60,11 +63,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
     }
 
-    const logIn = (cpf:any) => {
-        
+    const logIn = (cpf:any, nome:any) => {
         setIsLoggedIn(true);
         setCpf(cpf);
-        storeAuthState({ isLoggedIn: true, cpf: cpf });
+        setNome(nome);
+        storeAuthState({ isLoggedIn: true, cpf: cpf, nome: nome });
         router.replace('/',{});
     };
 
@@ -90,6 +93,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
                     const auth = JSON.parse(value);
                     setIsLoggedIn(auth.isLoggedIn);
                     setCpf(auth.cpf);
+                    setNome(auth.nome);
                 };
                 if (valueTrajeto !== null) {
                     const auth = JSON.parse(valueTrajeto);
@@ -104,7 +108,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isReady, cpf, trajetoId, logIn, logOut, escolherTrajeto }}>
+        <AuthContext.Provider value={{ isLoggedIn, isReady, cpf, nome, trajetoId, logIn, logOut, escolherTrajeto }}>
             {children}
         </AuthContext.Provider>
     );

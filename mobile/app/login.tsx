@@ -3,13 +3,23 @@ import { View, StyleSheet, Image, TextInput, TouchableHighlight, Text } from "re
 import { AuthContext } from "./utils/authContext";
 
 export default function Login() {
+    //() => authContext.logIn(cpf)
     const [cpf, setCpf] = useState('');
     const [senha, setSenha] = useState('');
-    const inputCpf = (event:any) => {
-        setCpf(event.target.value)
-    };
-    const inputSenha = (event:any) => {
-        setSenha(event.target.value)
+
+    const handleEnvio = async () => {
+        const url = 'http://localhost:5000/signin'
+
+        let resultado = await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({cpf:cpf, senha:senha})
+        });
+
+        if (resultado.ok) {
+            resultado = await resultado.json()
+            authContext.logIn(resultado.cpf, resultado.nome)
+        };
     };
 
     const authContext = useContext(AuthContext);
@@ -19,11 +29,11 @@ export default function Login() {
             <View style={styles.container}>
                 <Image style={styles.logo} source={require('../assets/images/logotipo.png')} />
 
-                <TextInput style={styles.input} placeholder="CPF" value={cpf} onChange={inputCpf} />
+                <TextInput style={styles.input} placeholder="CPF" value={cpf} onChangeText={(text) => {setCpf(text)}} />
                 
-                <TextInput style={styles.input} placeholder="Senha" secureTextEntry={true} value={senha} onChange={inputSenha} />
+                <TextInput style={styles.input} placeholder="Senha" secureTextEntry={true} value={senha} onChangeText={(text) => {setSenha(text)}} />
 
-                <TouchableHighlight style={styles.botao} onPress={() => authContext.logIn(cpf)}>
+                <TouchableHighlight style={styles.botao} onPress={handleEnvio}>
                     <Text style={styles.textoBotao}>ENTRAR</Text>
                 </TouchableHighlight>
             </View>

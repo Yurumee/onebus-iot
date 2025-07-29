@@ -7,17 +7,12 @@ export default function Index() {
   const authContext = useContext(AuthContext);
   const router = useRouter();
 
-  {/* ALTERAR */}
-  const dadosUsuario = {
-    nome: 'André Gustavo Silva Dantas'
-  }
-
   return (
     <View style={styles.bg}>
       <View style={styles.container}>
         <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
 
-        <Text style={styles.nome}>{dadosUsuario.nome}</Text> {/* ALTERAR */}
+        <Text style={styles.nome}>{authContext.nome}</Text> {/* ALTERAR */}
 
         <Text style={styles.nome}>Trajeto Selecionado (linha ilustrativa para teste): {authContext.trajetoId}</Text> {/* REMOVER */}
 
