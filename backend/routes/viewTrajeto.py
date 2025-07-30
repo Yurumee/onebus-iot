@@ -21,13 +21,13 @@ def post_new_trajeto():
         - status, message e dados do trajeto.
         - status error se ocorrer exceção.
     """
-    servico_prestado = request.form.get('servico-prestado')
-    origem = request.form.get('origem')
-    destino = request.form.get('destino')
-    placa = request.form.get('placa')
-    datahora_estimado = datetime.strptime(request.form.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
-    # # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
-    # datahora_estimado_datetime = datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S") # Testes
+    data = request.get_json()
+    servico_prestado = data.get('servico-prestado')
+    origem = data.get('origem')
+    destino = data.get('destino')
+    placa = data.get('placa')
+    datahora_estimado = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
+    # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
 
     # servico_prestado = 'Saude'
     # origem = 'Cerro Corá'
@@ -92,7 +92,8 @@ def get_especific_trajeto():
     Retorno:
         Renderiza o template 'trajetos_motorista.html' com trajetos filtrados e dados do motorista.
     """
-    cnh_desejado = request.form.get('motorista-cnh')
+    data = request.get_json()
+    cnh_desejado = data.get('motorista-cnh')
     motorista_desejado = Motorista.query.filter_by(cnh=cnh_desejado).first()
 
     if motorista_desejado:

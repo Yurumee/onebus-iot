@@ -36,9 +36,9 @@ def gerar_dados_teste(pontos):
             motorista = Motorista(
                 cnh=cnh_teste,
                 cpf='111.222.333-44',
-                nomeCompleto='Motorista de Teste',
+                nome_completo='Motorista de Teste',
                 senha='teste',
-                tipoUsuario='motorista'
+                tipo_usuario='motorista'
             )
             db.session.add(motorista)
 

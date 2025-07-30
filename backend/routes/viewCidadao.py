@@ -26,14 +26,14 @@ def post_new_cidadao():
             "status": "error",
             "message": "Cidadão já cadastrado.",
             "cpf": cpf,
-            "nome": cidadao_existente.nomeCompleto
+            "nome": cidadao_existente.nome_completo
         }), 409
 
     MOCKCidadao = Cidadao(
         cpf=cpf,
-        nomeCompleto=nome,
+        nome_completo=nome,
         senha=senhaTop,
-        tipoUsuario='cidadao'
+        tipo_usuario='cidadao'
     )
 
     db.session.add(MOCKCidadao)
@@ -73,7 +73,7 @@ def singin():
                 "status": "success",
                 "message": "Autenticação realizada com sucesso.",
                 "cpf": cpf,
-                "nome": user.nomeCompleto
+                "nome": user.nome_completo
             }), 200
         else:
             return jsonify({
