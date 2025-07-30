@@ -1,3 +1,4 @@
+import json
 from config import app, db
 from flask import Blueprint, request, jsonify
 from models.cidadao import Cidadao
@@ -62,8 +63,9 @@ def singin():
         - status, message e dados do cidadão.
         - status error se usuário não existir ou senha estiver incorreta.
     """
-    cpf = request.form.get('cpf')
-    password = request.form.get('senha')
+    dadosRequest = json.loads(request.data)
+    cpf = dadosRequest['cpf']
+    password = dadosRequest['senha']
 
     user = Cidadao.query.filter_by(cpf=cpf).first()
 
