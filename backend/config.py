@@ -2,9 +2,11 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from flask_cors import CORS
 # from sqlalchemy import create_engine
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend/templates/')
+CORS(app)
 
 # Cria a pasta 'database' se não existir
 db_folder = os.path.join(app.root_path, 'database')

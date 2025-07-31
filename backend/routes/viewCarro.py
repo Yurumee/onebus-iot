@@ -45,3 +45,4 @@ def post_new_car():
         mensagem += f"Carros já existentes: {', '.join(ja_existentes)}."
 
     return mensagem.strip()
+

@@ -2,7 +2,7 @@ from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy import String
 
 class Usuario():
-    CPF: Mapped[str] = mapped_column(String(14), primary_key=True)
-    nomeCompleto: Mapped[str] = mapped_column(String(80), nullable=False)
-    senha: Mapped[str] = mapped_column(String(30), nullable=False)
-    tipoUsuario: Mapped[str] = mapped_column(String(20), nullable=False)
+    cpf: Mapped[str] = mapped_column(String(14), primary_key=True)
+    nome_completo: Mapped[str] = mapped_column(String(80))
+    senha: Mapped[str] = mapped_column(String(30))
+    tipo_usuario: Mapped[str] = mapped_column(String(20))

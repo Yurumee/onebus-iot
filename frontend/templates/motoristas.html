@@ -1,0 +1,15 @@
+{% extends "template_basis.html" %}
+
+{% block title %}Tela de Testes - Motoristas{% endblock %}
+
+{% block content %}
+
+    <h1>Tela para deletar motorista</h1>
+    <form action="/motorista/excluir-motorista" method="POST">
+        <span>CPF: </span>
+        <input type="text" name="motorista-cpf">
+        <button type="submit">Enviar</button>
+    </form>
+    
+
+{% endblock %}

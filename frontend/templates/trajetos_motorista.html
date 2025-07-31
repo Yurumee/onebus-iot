@@ -1,0 +1,24 @@
+{% extends "template_basis.html" %}
+
+{% block title %}Tela de Testes - Rotas e seus Motoristas{% endblock %}
+
+{% block content %}
+
+    <h1>Teste de Rotas e seus Motoristas</h1>
+
+    {% for trajetos in especific_trajeto %}
+        
+        <h3>Origem: </h3> 
+        {{ trajetos[0].pontoOrigem }}
+        
+        <h3>Destino: </h3>
+        {{ trajetos[0].pontoDestino }}
+
+        <h3>Serviço prestado: </h3>
+        {{ trajetos[0].servicoPrestado }}
+        
+        <h3>Motorista responsável: </h3>
+        {{ trajetos[1].nome_completo }}
+    {% endfor %}
+
+{% endblock %}

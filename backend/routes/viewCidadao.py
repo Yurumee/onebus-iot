@@ -1,3 +1,4 @@
+import json
 from config import app, db
 from flask import Blueprint, request, jsonify
 from models.cidadao import Cidadao
@@ -5,7 +6,7 @@ from models.cidadao import Cidadao
 view_cidadao = Blueprint('view_cidadao', __name__)
 
 @view_cidadao.route('/')
-def home_cidadao():
+def post_new_cidadao():
     """
     Rota para cadastrar um cidadão mockado no banco de dados.
 
@@ -20,20 +21,20 @@ def home_cidadao():
     nome = 'Alice Mock'
     senhaTop = 'senhaforte123'
 
-    cidadao_existente = Cidadao.query.filter_by(CPF=cpf).first()
+    cidadao_existente = Cidadao.query.filter_by(cpf=cpf).first()
     if cidadao_existente:
         return jsonify({
             "status": "error",
             "message": "Cidadão já cadastrado.",
             "cpf": cpf,
-            "nome": cidadao_existente.nomeCompleto
+            "nome": cidadao_existente.nome_completo
         }), 409
 
     MOCKCidadao = Cidadao(
-        CPF=cpf,
-        nomeCompleto=nome,
+        cpf=cpf,
+        nome_completo=nome,
         senha=senhaTop,
-        tipoUsuario='cidadao'
+        tipo_usuario='cidadao'
     )
 
     db.session.add(MOCKCidadao)
@@ -55,17 +56,18 @@ def singin():
         GET, POST
 
     Parâmetros esperados (via formulário):
-        - cpf: CPF do cidadão
+        - cpf: cpf do cidadão
         - senha: Senha do cidadão
 
     Retorno:
         - status, message e dados do cidadão.
         - status error se usuário não existir ou senha estiver incorreta.
     """
-    cpf = request.form.get('cpf')
-    password = request.form.get('senha')
+    dadosRequest = json.loads(request.data)
+    cpf = dadosRequest['cpf']
+    password = dadosRequest['senha']
 
-    user = Cidadao.query.filter_by(CPF=cpf).first()
+    user = Cidadao.query.filter_by(cpf=cpf).first()
 
     if user:
         if user.senha == password:
@@ -73,7 +75,7 @@ def singin():
                 "status": "success",
                 "message": "Autenticação realizada com sucesso.",
                 "cpf": cpf,
-                "nome": user.nomeCompleto
+                "nome": user.nome_completo
             }), 200
         else:
             return jsonify({
