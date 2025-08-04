@@ -26,7 +26,7 @@ def gerar_dados_teste(pontos):
         placa_teste = 'TESTE001'
         carro = db.session.query(Carro).filter_by(placa=placa_teste).first()
         if not carro:
-            carro = Carro(placa=placa_teste, tipoVeiculo='Van de Teste')
+            carro = Carro(placa=placa_teste, tipo_veiculo='Van de Teste')
             db.session.add(carro)
 
         # --- 2. Obter ou Criar Motorista ---
@@ -52,9 +52,9 @@ def gerar_dados_teste(pontos):
             
         # --- 4. Criar um novo Trajeto ---
         novo_trajeto = Trajeto(
-            servicoPrestado="Saúde (Teste)",
-            pontoOrigem="Currais Novos",
-            pontoDestino="Natal",
+            servico_prestado="Saúde (Teste)",
+            ponto_origem="Currais Novos",
+            ponto_destino="Natal",
             carro_placa=carro.placa,  # Associa o trajeto ao carro
             horarioEstimado=datetime.datetime.now().time()
         )
@@ -72,7 +72,7 @@ def gerar_dados_teste(pontos):
             ponto = PontoTrajeto(
                 latitude=str(base_lat + (random.random() - 0.5) * 0.1),
                 longitude=str(base_lon + (random.random() - 0.5) * 0.1),
-                trajeto_id=novo_trajeto.idTrajeto # Associa o ponto ao trajeto
+                trajeto_id=novo_trajeto.id_trajeto # Associa o ponto ao trajeto
             )
             db.session.add(ponto)
             pontos_gerados_coords.append({
@@ -88,7 +88,7 @@ def gerar_dados_teste(pontos):
             "message": f"{pontos} pontos de teste gerados com sucesso.",
             "carro_placa": carro.placa,
             "motorista_cnh": motorista.cnh,
-            "trajeto_id": novo_trajeto.idTrajeto,
+            "trajeto_id": novo_trajeto.id_trajeto,
             "primeiro_ponto": pontos_gerados_coords[0] if pontos_gerados_coords else None
         }), 201
 

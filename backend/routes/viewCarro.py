@@ -32,7 +32,7 @@ def post_new_car():
         if existe:
             ja_existentes.append(placa)
         else:
-            novo_carro = Carro(placa=placa, tipoVeiculo=tipo)
+            novo_carro = Carro(placa=placa, tipo_veiculo=tipo)
             db.session.add(novo_carro)
             cadastrados.append(placa)
 

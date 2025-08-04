@@ -22,8 +22,8 @@ def post_ponto_viagem():
     horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
     
     MOCKPontoV = PontoViagem(
-        latitudePonto='10.000001',
-        longitudePonto='-11.000002',
+        latitude_ponto='10.000001',
+        longitude_ponto='-11.000002',
         data=horarioComeco.date(),
         hora=horarioComeco.time()
         # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
@@ -37,8 +37,8 @@ def post_ponto_viagem():
             "status": "success",
             "message": "Trajeto inserido com sucesso.",
             "trajeto": {
-                "latitudePonto": MOCKPontoV.latitudePonto,
-                "longitudePonto": MOCKPontoV.longitudePonto,
+                "latitude_ponto": MOCKPontoV.latitude_ponto,
+                "longitude_ponto": MOCKPontoV.longitude_ponto,
                 "data": MOCKPontoV.data,
                 "hora": MOCKPontoV.hora,
                 # "horarioEstimado": str(MOCKPontoV.horarioEstimado)

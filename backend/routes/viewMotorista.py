@@ -60,6 +60,53 @@ def post_new_motorista():
     
     return render_template('pagina_cadastro_motorista.html'), 302
 
+@view_motorista.route('/todos', methods=['GET'])
+def get_motorista():
+    """
+    Rota para mostrar todos os motoristas
+
+    Método:
+        Get
+
+    Retorno:
+        Página listando todos os motoristas
+    """
+    motoristas = Motorista.query.all()
+    
+    return render_template('todos_motoristas.html', all_motoristas=motoristas)
+
+@view_motorista.route('/motorista-especifico', methods=['GET'])
+def get_especific_motorista():
+    """
+    Rota para mostrar um motorista especifico pela cnh informada
+
+    Método:
+        Get
+
+    Retorno:
+        Página listando motorista especifico
+    """
+
+    data = request.get_json()
+    cnh_desejado = data.get('motorista-cnh')
+    try:
+        motorista = Motorista.query.filter_by(cnh=cnh_desejado).first()
+    except Exception as e:
+        return jsonify({
+            'status':'error',
+            'message':f'{str(e)}'
+        }), 400
+    
+    if motorista:
+        return render_template('motorista_especifico.html', motorista=motorista)
+    else:
+        return jsonify({
+            'status':'error',
+            'message':f'motorista não encontrado: {str(e)}'
+        }), 404
+    
+# @view_motorista.route('/motorista')
+
 @view_motorista.route('/excluir-motorista', methods=['GET', 'DELETE'])
 def delete_motorista():
     """

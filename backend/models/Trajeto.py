@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'
 
-    idTrajeto: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    servicoPrestado: Mapped[str] = mapped_column(String(50))
-    pontoOrigem: Mapped[str] = mapped_column(String(50))
-    pontoDestino: Mapped[str] = mapped_column(String(50))
+    id_trajeto: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    servico_prestado: Mapped[str] = mapped_column(String(50))
+    ponto_origem: Mapped[str] = mapped_column(String(50))
+    ponto_destino: Mapped[str] = mapped_column(String(50))
     horarioEstimado: Mapped[datetime.time] = mapped_column()
     
     # coluna de chave estrangeira

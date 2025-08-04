@@ -13,9 +13,9 @@ class Carro(db.Model):
 
     # idEmbarcado: Mapped[str] = mapped_column(String, primary_key=True)
     placa: Mapped[str] = mapped_column(String(7), primary_key=True)
-    latitudeAtual: Mapped[Optional[str]] = mapped_column(String)
-    longitudeAtual: Mapped[Optional[str]] = mapped_column(String)
-    tipoVeiculo: Mapped[str] = mapped_column(String(20))
+    latitude_atual: Mapped[Optional[str]] = mapped_column(String)
+    longitude_atual: Mapped[Optional[str]] = mapped_column(String)
+    tipo_veiculo: Mapped[str] = mapped_column(String(20))
 
     # relacionamento N motoristas para 1 carro
     # cada carro pode ter vários motoristas associados
