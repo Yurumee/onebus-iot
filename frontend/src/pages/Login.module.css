@@ -1,0 +1,95 @@
+/* src/pages/Login.module.css */
+
+.loginPageContainer {
+  background-color: var(--background);
+}
+
+.loginCard {
+  background-color: var(--white);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  color: var(--dark-text);
+}
+
+.loginHeader {
+  text-align: center;
+}
+
+.appLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.appLogoIcon {
+  font-size: 2rem;
+  color: var(--yellow);
+  margin-right: 10px;
+}
+
+.appLogoText {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.loginFooter {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.forgotPasswordLink {
+  color: var(--dark-gray);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgotPasswordLink:hover {
+  color: var(--yellow);
+  text-decoration: underline;
+}
+
+/* --- SEÇÃO CORRIGIDA COM :global --- */
+
+/* Dizendo: dentro da nossa classe .loginCard, encontre a classe global .form-label */
+.loginCard :global(.form-label) {
+  color: var(--dark-gray);
+  font-weight: 500;
+}
+
+.loginCard :global(.input-group-text) {
+  background-color: transparent;
+  border-right: none;
+  color: var(--medium-gray);
+}
+
+.loginCard :global(.form-control) {
+  border-left: none;
+}
+
+.loginCard :global(.form-control:focus) {
+  box-shadow: none;
+  border-color: var(--yellow);
+}
+
+.loginCard :global(.input-group:focus-within .input-group-text) {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.loginCard :global(.btn-primary) {
+  background-color: var(--yellow);
+  border-color: var(--yellow);
+  color: var(--dark-text);
+  font-weight: bold;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.loginCard :global(.btn-primary:hover) {
+  background-color: #e0c23d;
+  border-color: #e0c23d;
+  transform: scale(1.02);
+}

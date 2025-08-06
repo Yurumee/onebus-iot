@@ -1,0 +1,166 @@
+/* src/components/layout/MainLayout.module.css */
+
+.layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--white);
+    border-right: 1px solid #e5e7eb;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.mainContent {
+    flex-grow: 1;
+    margin-left: 260px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.mainContent.expanded {
+    margin-left: 80px;
+}
+
+/* --- CABEÇALHO DA SIDEBAR --- */
+.sidebarHeader {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    /* Comportamento padrão (aberto): itens lado a lado */
+    justify-content: space-between;
+    flex-direction: row;
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+/* ESTA É A MUDANÇA PRINCIPAL */
+.sidebar.collapsed .sidebarHeader {
+    /* Comportamento quando colapsado: itens um sobre o outro */
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    /* Adiciona um espaço entre o logo e o botão */
+    height: auto;
+    /* Altura automática para caber os itens empilhados */
+    padding: 16px;
+}
+
+.sidebarLogo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: var(--dark-text);
+}
+
+.sidebar.collapsed .sidebarLogo {
+    justify-content: center;
+    gap: 0;
+}
+
+.sidebarLogoIcon {
+    background-color: var(--yellow);
+    color: var(--dark-text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.sidebarLogoText {
+    font-weight: 600;
+    font-size: 1.25rem;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .sidebarLogoText {
+    opacity: 0;
+    width: 0;
+}
+
+/* --- MENU --- */
+.sidebarMenu {
+    padding: 16px 0;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 4px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    color: var(--dark-gray);
+    text-decoration: none;
+}
+
+.navLink:hover {
+    background-color: var(--background);
+    color: var(--dark-text);
+}
+
+.navLink.active {
+    background-color: #FFFBEB;
+    /* Amarelo bem claro */
+    color: var(--dark-text);
+    font-weight: 500;
+}
+
+.menuIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.menuText {
+    transition: opacity 0.2s ease;
+    font-weight: 500;
+}
+
+.sidebar.collapsed .menuText {
+    opacity: 0;
+    width: 0;
+}
+
+/* --- BOTÃO DE TOGGLE --- */
+.toggleBtn {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--medium-gray);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+    background-color: var(--background);
+    color: var(--dark-text);
+}

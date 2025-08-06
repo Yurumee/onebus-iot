@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 class PontoViagem(db.Model):
     __tablename__ = 'ponto_viagem'
 
-    idPontoViagem: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    latitudePonto: Mapped[str] = mapped_column(String)
-    longitutdePonto: Mapped[str] = mapped_column(String)
+    id_ponto_viagem: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    latitude_ponto: Mapped[str] = mapped_column(String)
+    longitude_ponto: Mapped[str] = mapped_column(String)
     data: Mapped[datetime.date] = mapped_column()
     hora: Mapped[datetime.time] = mapped_column()
 

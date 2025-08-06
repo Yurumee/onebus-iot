@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class Motorista(db.Model, Usuario):
     __tablename__ = 'motorista'
 
-    cnh: Mapped[int] = mapped_column(Integer, primary_key=True)
+    cnh: Mapped[int] = mapped_column(Integer, unique=True)
     # coluna de chave estrangeira
     carro_placa: Mapped[Optional[str]] = mapped_column(ForeignKey('carro.placa'))
 
