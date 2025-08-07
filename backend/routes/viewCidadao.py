@@ -1,4 +1,4 @@
-from config import app, db
+from config import db
 from flask import Blueprint, request, jsonify, render_template
 from models.cidadao import Cidadao
 from models.trajetos_cidadaos import TrajetosCidadaos
@@ -63,7 +63,7 @@ def post_new_cidadao():
             "nome": nome_cidadao
         }), 201
     
-    return render_template('pagina_cadastro.html'), 200
+    return render_template('pagina_cadastro.html'), 302
     # return jsonify({
     #     'status':'OK'
     # })
@@ -82,7 +82,7 @@ def get_cidadao():
         
     cidadaos = Cidadao.query.all()
 
-    return render_template('todos-cidadaos.html', all_cidadao=cidadaos)
+    return render_template('todos-cidadaos.html', all_cidadao=cidadaos), 302
 
 @view_cidadao.route('/cidadao-especifico', methods=['GET'])
 def get_especific_cidadao():
@@ -108,14 +108,14 @@ def get_especific_cidadao():
         }), 400
 
     if cidadao:
-        return render_template('cidadao_especifico.html', cidadao=cidadao)
+        return render_template('cidadao_especifico.html', cidadao=cidadao), 302
     else:
         return jsonify({
             'status':'error',
             'message':f'cidadao não encontrado: {str(e)}'
         }), 404
 
-@view_cidadao.route('/trajetos', methods=['GET', 'POST'])
+@view_cidadao.route('/trajetos', methods=['GET'])
 def get_trajetos_vinculados():
     """
     Rota para mostrar os trajetos de um cidadao especifico
@@ -126,40 +126,34 @@ def get_trajetos_vinculados():
     Retorno:
         Página listando os trajetos do cidadao
     """
-    if request.method == 'POST':
-        data = request.get_json()
-        cpf_desejado = data.get('cidadao-cpf')
-
-        cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
-
-        if cidadao:
-            # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
-            trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
-
-            """DEBUG"""
-            # print(f'trajetos: {trajetos_cidadao}')
-
-            # print(f'retorno do trajeto 1 (id do trajeto): {trajetos_cidadao[0][0].trajeto_id}')
-            # print(f'retorno do trajeto 1 (placa): {trajetos_cidadao[0][1].carro_placa}')
-            # print(f'retorno do trajeto 1 (origem): {trajetos_cidadao[0][1].ponto_origem}')
-            # print(f'retorno do trajeto 1 (destino): {trajetos_cidadao[0][1].ponto_destino}')
-            # print(f'retorno do trajeto 1 (horario): {trajetos_cidadao[0][1].horarioEstimado}')
-            
-            # print(f'objeto trajeto no index [1]: {trajetos_cidadao[1]}')
-            
-            # print(f'retorno do trajeto 3 (id do trajeto): {trajetos_cidadao[1][0].trajeto_id}')
-            # print(f'retorno do trajeto 3 (placa): {trajetos_cidadao[1][1].carro_placa}')
-            # print(f'retorno do trajeto 3 (origem): {trajetos_cidadao[1][1].ponto_origem}')
-            # print(f'retorno do trajeto 3 (destino): {trajetos_cidadao[1][1].ponto_destino}')
-            # print(f'retorno do trajeto 3 (horario): {trajetos_cidadao[1][1].horarioEstimado}')
-            
-            return render_template('pagina_exibir_trajetos.html', trajetos=trajetos_cidadao), 200
-
-        else:
-            return jsonify({
-                'status':'error',
-                'message':f'cidadao não encontrado'
-            }), 404
+    data = request.get_json()
+    cpf_desejado = data.get('cidadao-cpf')
+    cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
+    if cidadao:
+        # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
+        trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
+        """DEBUG"""
+        # print(f'trajetos: {trajetos_cidadao}')
+        # print(f'retorno do trajeto 1 (id do trajeto): {trajetos_cidadao[0][0].trajeto_id}')
+        # print(f'retorno do trajeto 1 (placa): {trajetos_cidadao[0][1].carro_placa}')
+        # print(f'retorno do trajeto 1 (origem): {trajetos_cidadao[0][1].ponto_origem}')
+        # print(f'retorno do trajeto 1 (destino): {trajetos_cidadao[0][1].ponto_destino}')
+        # print(f'retorno do trajeto 1 (horario): {trajetos_cidadao[0][1].horario_estimado}')
+        
+        # print(f'objeto trajeto no index [1]: {trajetos_cidadao[1]}')
+        
+        # print(f'retorno do trajeto 3 (id do trajeto): {trajetos_cidadao[1][0].trajeto_id}')
+        # print(f'retorno do trajeto 3 (placa): {trajetos_cidadao[1][1].carro_placa}')
+        # print(f'retorno do trajeto 3 (origem): {trajetos_cidadao[1][1].ponto_origem}')
+        # print(f'retorno do trajeto 3 (destino): {trajetos_cidadao[1][1].ponto_destino}')
+        # print(f'retorno do trajeto 3 (horario): {trajetos_cidadao[1][1].horario_estimado}')
+        
+        return render_template('pagina_exibir_trajetos.html', trajetos=trajetos_cidadao), 302
+    else:
+        return jsonify({
+            'status':'error',
+            'message':f'cidadao não encontrado'
+        }), 404
 
 
 @view_cidadao.route('/alterar-cidadao', methods=['GET', 'PATCH'])
@@ -222,7 +216,7 @@ def edit_cidadao():
                 "message":"cidadao nao encontrado"
             }), 404
         
-    return render_template('pagina_editar_cidadao.html'), 200
+    return render_template('pagina_editar_cidadao.html'), 302
             
 
 @view_cidadao.route('/excluir-cidadao', methods=['GET', 'DELETE'])

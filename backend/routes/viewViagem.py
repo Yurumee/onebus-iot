@@ -41,7 +41,7 @@ def post_ponto_viagem():
                 "longitude_ponto": MOCKPontoV.longitude_ponto,
                 "data": MOCKPontoV.data,
                 "hora": MOCKPontoV.hora,
-                # "horarioEstimado": str(MOCKPontoV.horarioEstimado)
+                # "horario_estimado": str(MOCKPontoV.horario_estimado)
                 # "motoristaResp": MOCKTrajeto.motoristaResp,   # Inclua se existir
                 # "idEmbarcado": MOCKTrajeto.idEmbarcado        # Inclua se existir
             }

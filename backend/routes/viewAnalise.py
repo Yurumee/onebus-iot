@@ -56,7 +56,7 @@ def gerar_dados_teste(pontos):
             ponto_origem="Currais Novos",
             ponto_destino="Natal",
             carro_placa=carro.placa,  # Associa o trajeto ao carro
-            horarioEstimado=datetime.datetime.now().time()
+            horario_estimado=datetime.datetime.now().time()
         )
         db.session.add(novo_trajeto)
         

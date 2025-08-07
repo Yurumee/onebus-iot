@@ -1,4 +1,4 @@
-from config import app, db
+from config import db
 from flask import Blueprint, request, jsonify, render_template
 from models.motorista import Motorista
 from models.carro import Carro
@@ -18,15 +18,7 @@ def post_new_motorista():
         nome_motorista = data.get('motorista-nome') 
         senha = data.get('senha') 
         tipo_usuario = data.get('tipo-usuario') 
-        carro_placa = data.get('carro-placa')
-
-        # cnh = 9876543219
-        # cpf = '123.456.789-00'
-        # nome = 'Alice Mock 2'
-        # senha = 'senhamuitoforte123'
-        # tipo_usuario = 'motorista'
-        # carroPlaca = '4N4L1C3'
-        # carroPlaca = None
+        carro_placa = data.get('placa-carro')
 
         motorista_existente = Motorista.query.filter_by(cpf=cpf_motorista).first()
         cnh_existente = Motorista.query.filter_by(cnh=cnh_motorista).first()
@@ -43,10 +35,14 @@ def post_new_motorista():
             cnh=cnh_motorista,
             cpf=cpf_motorista,
             nome_completo=nome_motorista,
-            carro_placa=carro_placa,
+            # carro_placa=carro_placa,
             senha=senha,
             tipo_usuario=tipo_usuario,
         )
+
+        if carro_placa:
+            carro_desejado = Carro.query.filter_by(placa=carro_placa).first()
+            carro_desejado.motorista_cnh.append(new_motorista)
 
         db.session.add(new_motorista)
         db.session.commit()
@@ -73,7 +69,7 @@ def get_motorista():
     """
     motoristas = Motorista.query.all()
     
-    return render_template('todos_motoristas.html', all_motoristas=motoristas)
+    return render_template('todos_motoristas.html', all_motoristas=motoristas), 302
 
 @view_motorista.route('/motorista-especifico', methods=['GET'])
 def get_especific_motorista():
@@ -98,7 +94,7 @@ def get_especific_motorista():
         }), 400
     
     if motorista:
-        return render_template('motorista_especifico.html', motorista=motorista)
+        return render_template('motorista_especifico.html', motorista=motorista), 302
     else:
         return jsonify({
             'status':'error',
@@ -167,10 +163,11 @@ def edit_motorista():
             # new_cnh = data.get('motorista-cnh')
             # new_tipo_usuario = data.get('tipo-usuario')
 
-            if new_nome != motorista.nome_completo:
+            if new_nome != motorista.nome_completo and new_nome != None:
                 try:
                     motorista.nome_completo = new_nome
                     db.session.commit()
+                    print("status:success, message: update realizado com sucesso")
 
                 except Exception as e:
                     return jsonify({
@@ -179,18 +176,22 @@ def edit_motorista():
                         "error":f"{str(e)}"
                     })
             
-            if new_placa != motorista.carro_placa or new_placa != None:
+            if new_placa != motorista.carro_placa and new_placa != None:
                 try:
                     carro_desejado = Carro.query.filter_by(placa=new_placa).first()
+                    print(f'carro_desejado.motorista_cnh: {carro_desejado.motorista_cnh}')
+                    # print('carro_desejado')
 
                     if carro_desejado:
+                        print(f'carro_desejado.motorista_cnh: {carro_desejado.motorista_cnh}')
                         carro_desejado.motorista_cnh.append(motorista)
                         db.session.commit()
+                        print("status:success, message: update realizado com sucesso")
 
                     else:
                         return jsonify({
                             "status":"not found",
-                            "message":"esta placa não existe"
+                            "message":"esta placa nao existe"
                         })
 
                 except Exception as e:
@@ -203,7 +204,7 @@ def edit_motorista():
             # db.session.commit()
             return jsonify({
                 "status":"success",
-                "message":"update realizado com sucesso"
+                "message":"updates realizados com sucesso"
             })
 
         else:
@@ -213,7 +214,7 @@ def edit_motorista():
             })
 
     else:
-        return render_template('motoristas.html'), 302
+        return jsonify({'status':"ok"}), 302
 
 @view_motorista.route('/motorista-carro', methods=['GET', 'POST'])
 def register_carro():
