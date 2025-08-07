@@ -154,7 +154,15 @@ def get_trajetos_vinculados():
             # print(f'retorno do trajeto 3 (destino): {trajetos_cidadao[1][1].ponto_destino}')
             # print(f'retorno do trajeto 3 (horario): {trajetos_cidadao[1][1].horarioEstimado}')
             
-            return render_template('pagina_exibir_trajetos.html', trajetos=trajetos_cidadao), 200
+            resposta_json = {}
+            for trajeto in trajetos_cidadao:
+                resposta_json[trajeto[0].trajeto_id] = {"trajeto_id": trajeto[0].trajeto_id, "carro_placa": trajeto[1].carro_placa, "ponto_origem": trajeto[1].ponto_origem, "ponto_destino": trajeto[1].ponto_destino, "horario_estimado": str(trajeto[1].horario_estimado)}
+
+            return jsonify({
+                "status": "success",
+                "message": "Trajetos encontrados.",
+                "trajetos": resposta_json,
+            }), 200
 
         else:
             return jsonify({

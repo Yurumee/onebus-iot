@@ -8,7 +8,7 @@ export default function Login() {
     const [senha, setSenha] = useState('');
 
     const handleEnvio = async () => {
-        const url = 'http://localhost:5000/signin'
+        const url = 'http://localhost:5000/cidadao/login'
 
         let resultado = await fetch(url, {
             method: 'POST',

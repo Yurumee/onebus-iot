@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useState, useContext } from "react";
 import { Text, View, StyleSheet, TouchableHighlight, Image, FlatList, ScrollView } from "react-native";
 import { AuthContext } from "../utils/authContext";
 import { useRouter } from "expo-router";
@@ -7,22 +7,24 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 export default function Index() {
   const authContext = useContext(AuthContext);
   const router = useRouter();
+  const [listaTrajetos, setListaTrajetos] = useState([]);
 
-  {/* ALTERAR */}
-  const listaTrajetos = [
-    {
-        id: 1,
-        origem: 'Rua 1',
-        destino: 'Rua 2',
-        veiculo: 'FOI2E50'
-    },
-    {
-        id: 2,
-        origem: 'Rua 3',
-        destino: 'Rua 4',
-        veiculo: 'SAO8E40'
-    }
-  ]
+  const handleTrajetos = async () => {
+    const url = 'http://localhost:5000/cidadao/trajetos'
+
+    let resultado = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({'cidadao-cpf':authContext.cpf})
+    });
+
+    if (resultado.ok) {
+        resultado = await resultado.json()
+        setListaTrajetos(Object.values(resultado.trajetos))
+    };
+  };
+
+  handleTrajetos()
 
   return (
     <View style={styles.bg}>
@@ -37,13 +39,13 @@ export default function Index() {
               data={listaTrajetos}
               renderItem={({item}) => {
                 return <>
-                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.trajetoCard} onPress={() => {authContext.escolherTrajeto(item.id)}}>
+                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.trajetoCard} onPress={() => {authContext.escolherTrajeto(item.trajeto_id)}}>
                             <View style={styles.cardContainer}>
                                 <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
                                 <View>
-                                    <Text>Origem: {item.origem}</Text> {/* ALTERAR */}
-                                    <Text>Destino: {item.destino}</Text> {/* ALTERAR */}
-                                    <Text>Placa do veículo: {item.veiculo}</Text> {/* ALTERAR */}
+                                    <Text>Origem: {item.ponto_origem}</Text> {/* ALTERAR */}
+                                    <Text>Destino: {item.ponto_destino}</Text> {/* ALTERAR */}
+                                    <Text>Placa do veículo: {item.carro_placa}</Text> {/* ALTERAR */}
                                 </View>
                             </View>
                         </TouchableHighlight>

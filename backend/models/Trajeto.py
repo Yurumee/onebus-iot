@@ -17,7 +17,7 @@ class Trajeto(db.Model):
     servico_prestado: Mapped[str] = mapped_column(String(50))
     ponto_origem: Mapped[str] = mapped_column(String(50))
     ponto_destino: Mapped[str] = mapped_column(String(50))
-    horarioEstimado: Mapped[datetime.time] = mapped_column()
+    horario_estimado: Mapped[datetime.time] = mapped_column()
     
     # coluna de chave estrangeira
     carro_placa: Mapped[str] = mapped_column(ForeignKey('carro.placa'))
