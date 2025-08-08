@@ -65,6 +65,54 @@ def post_new_car():
     
     return render_template('pagina_inserir_carro.html'), 302
 
+@view_carro.route('/todos', methods=['GET'])
+def get_carro():
+    """
+    Rota para mostrar todos os carros
+
+    Método:
+        Get
+
+    Retorno:
+        Página listando todos os carros
+    """
+    carros = Carro.query.all()
+    return render_template('todos_carros.html', all_carros=carros), 302
+
+@view_carro.route('/carro-especifico', methods=['GET'])
+def get_especific_carro():
+    """
+    Rota para mostrar um carro especifico pela placa informada
+
+    Método:
+        Get
+
+    Retorno:
+        Página listando carro especifico
+    """
+
+    data = request.get_json()
+    placa_desejada = data.get('placa-carro')
+    try:
+        carro = Motorista.query.filter_by(placa=placa_desejada).first()
+    except Exception as e:
+        return jsonify({
+            'status':'error',
+            'message':f'{str(e)}'
+        }), 400
+    
+    if carro:
+        return render_template('carro_especifico.html', carro=carro), 302
+    
+    else:
+        return jsonify({
+            'status':'error',
+            'message':f'carro não encontrado: {str(e)}'
+        }), 404
+    
+# @view_motorista.route('/motorista')
+
+
 @view_carro.route('/alterar-carro', methods=['GET', 'PATCH'])
 def edit_carro():
 
