@@ -255,3 +255,54 @@ def register_carro():
         }), 200
     
     return render_template('pagina_associar_carro.html'), 302
+
+@view_carro.route('/post-point-now', methods=['POST'])
+def post_point_carro():
+    """
+    Rota para postar latitude e longitude atual de um carro vindos do embarcado
+    
+    Método: 
+        POST
+
+    Retorno: 
+        Nenhum
+    """
+
+    data = request.get_json()
+    latitude_atual = data.get('latitude')
+    longitude_atual = data.get('longitude')
+    placa = data.get('placa-carro')
+
+    try:
+        carro_desejado = Carro.query.filter_by(placa=placa).first()
+    
+    except Exception as e:
+        return jsonify({
+            "status":"error",
+            "message":f"houve um erro {str(e)}"
+        }), 400
+    
+    if carro_desejado:
+        try:
+            if latitude_atual != carro_desejado.latitude_atual and latitude_atual != None:
+                carro_desejado.latitude_atual = latitude_atual
+
+            if longitude_atual != carro_desejado.longitude_atual and longitude_atual != None:
+                carro_desejado.longitude_atual = longitude_atual
+
+            db.session.commit()
+
+            return 200
+        
+        except Exception as e:
+            return jsonify({
+            "status":"error",
+            "message":f"houve um erro {str(e)}"
+        }), 400
+
+    else:
+        return jsonify({
+            "status":"not found",
+            "message":"carro nao encontrado"
+        }), 404
+    

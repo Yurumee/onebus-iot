@@ -369,17 +369,6 @@ def post_ponto_trajeto():
             NÃO POSSUI RETURN
         '''
         return 201
-
-        # return jsonify({
-        #     "status": "success",
-        #     "message": "Ponto de Trajeto inserido com sucesso.",
-        #     "trajeto": {
-        #         "latitude": MOCKPontoTrajeto.latitude,
-        #         "longitude": MOCKPontoTrajeto.longitude,
-        #         "id do trajeto": MOCKPontoTrajeto.trajeto_id,
-        #         # "horario_estimado": str(MOCKTrajeto.horario_estimado) # caso exista, descomentar
-        #     }
-        # }), 201
         
     except Exception as e:
         return jsonify({
