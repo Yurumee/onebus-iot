@@ -115,6 +115,15 @@ def get_especific_carro():
 
 @view_carro.route('/alterar-carro', methods=['GET', 'PATCH'])
 def edit_carro():
+    """
+    Rota para editar um carro específico com a placa informada
+
+    Método:
+        Get, Patch
+
+    Retorno:
+        Página mostrando carro editado
+    """
 
     if request.method == 'PATCH':
         data = request.get_json()
