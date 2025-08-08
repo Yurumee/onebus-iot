@@ -119,9 +119,6 @@ def edit_carro():
 def delete_carro():
     
     if request.method == 'DELETE':
-        # delete from motoristas
-        # delete from trajetos
-        # delete from pontos de trajeto
 
         data = request.get_json()
         placa_carro = data.get('placa-carro')
@@ -138,6 +135,8 @@ def delete_carro():
             try:
                 db.session.query(Trajeto).where(Trajeto.carro_placa == placa_carro).delete()
                 db.session.query(PontoViagem).where(PontoViagem.carro_placa == placa_carro).delete()
+                db.session.query(Motorista).where(Motorista.carro_placa == placa_carro).delete()
+
                 Carro.query.filter_by(placa=placa_carro).delete()
             
             except Exception as e:
@@ -145,6 +144,8 @@ def delete_carro():
                 "status":"error",
                 "message":f"houve um erro {str(e)}"
             }), 400
+
+            db.session.commit()
 
             return jsonify({
                 "status":"deleted",
@@ -158,3 +159,51 @@ def delete_carro():
             }), 404
     
     return render_template('pagina_deletar_carro.html'), 302
+
+@view_carro.route('/associar-motorista', methods=['GET', 'POST'])
+def register_carro():
+    """
+    Rota para associar um carro a um motorista
+    """
+
+    if request.method == 'POST':
+        data = request.get_json()
+        cnh_motorista = data.get('motorista-cnh')
+        placa_motorista = data.get('placa')
+
+        motorista = Motorista.query.filter_by(cnh=cnh_motorista).first()
+        carro_desejado = Carro.query.filter_by(placa=placa_motorista).first()
+
+        if not motorista:
+            return jsonify({
+                "status": "error",
+                "message": "Motorista não encontrado.",
+                "cnh": cnh_motorista
+            }), 404
+
+        if not carro_desejado:
+            return jsonify({
+                "status": "error",
+                "message": "Carro não encontrado.",
+                "placa": placa_motorista
+            }), 404
+
+        if motorista.carro_placa == placa_motorista:
+            return jsonify({
+                "status": "warning",
+                "message": "Placa já associada ao motorista.",
+                "cnh": cnh_motorista,
+                "placa": placa_motorista
+            }), 200
+
+        carro_desejado.motorista_cnh.append(motorista)
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Carro associado ao motorista com sucesso.",
+            "cnh": cnh_motorista,
+            "placa": placa_motorista
+        }), 200
+    
+    return render_template('pagina_associar_carro.html'), 302

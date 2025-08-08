@@ -132,21 +132,6 @@ def get_trajetos_vinculados():
     if cidadao:
         # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
         trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
-        """DEBUG"""
-        # print(f'trajetos: {trajetos_cidadao}')
-        # print(f'retorno do trajeto 1 (id do trajeto): {trajetos_cidadao[0][0].trajeto_id}')
-        # print(f'retorno do trajeto 1 (placa): {trajetos_cidadao[0][1].carro_placa}')
-        # print(f'retorno do trajeto 1 (origem): {trajetos_cidadao[0][1].ponto_origem}')
-        # print(f'retorno do trajeto 1 (destino): {trajetos_cidadao[0][1].ponto_destino}')
-        # print(f'retorno do trajeto 1 (horario): {trajetos_cidadao[0][1].horario_estimado}')
-        
-        # print(f'objeto trajeto no index [1]: {trajetos_cidadao[1]}')
-        
-        # print(f'retorno do trajeto 3 (id do trajeto): {trajetos_cidadao[1][0].trajeto_id}')
-        # print(f'retorno do trajeto 3 (placa): {trajetos_cidadao[1][1].carro_placa}')
-        # print(f'retorno do trajeto 3 (origem): {trajetos_cidadao[1][1].ponto_origem}')
-        # print(f'retorno do trajeto 3 (destino): {trajetos_cidadao[1][1].ponto_destino}')
-        # print(f'retorno do trajeto 3 (horario): {trajetos_cidadao[1][1].horario_estimado}')
         
         resposta_json = {}
         for trajeto in trajetos_cidadao:
@@ -157,6 +142,7 @@ def get_trajetos_vinculados():
             "message": "Trajetos encontrados.",
             "trajetos": resposta_json,
         }), 200
+    
     else:
         return jsonify({
             'status':'error',
@@ -197,7 +183,7 @@ def edit_cidadao():
         if cidadao:
             new_nome = data.get('cidadao-nome')
 
-            if new_nome != cidadao.nome_completo:
+            if new_nome != cidadao.nome_completo and new_nome != None:
                 try:
                     cidadao.nome_completo = new_nome
                     db.session.commit()
@@ -213,11 +199,11 @@ def edit_cidadao():
                     "message":"update realizado com sucesso"
                 }), 200
             
-            else:
-                return jsonify({
-                    "status":"error",
-                    "message":"o nome precisa ser diferente do atual"
-                }), 400
+            # else:
+            #     return jsonify({
+            #         "status":"error",
+            #         "message":"o nome precisa ser diferente do atual"
+            #     }), 400
         else:
             return jsonify({
                 "status":"error",
@@ -249,6 +235,7 @@ def delete_cidadao():
 
         try:
             cidadao = Cidadao.query.filter_by(cpf=cpf_cidadao).first()
+
         except Exception as e:
             return jsonify({
                 "status":"error",
@@ -257,18 +244,21 @@ def delete_cidadao():
         
         if cidadao:
             try:
+                db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.cidadao_cpf == cpf_cidadao).delete()
                 Cidadao.query.filter_by(cpf=cpf_cidadao).delete()
+
                 db.session.commit()
-                return jsonify({
-                    "status":"success",
-                    "message":"cidadao deletado"
-                }), 204
             
             except Exception as e:
                 return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
             }), 400
+
+            return jsonify({
+                    "status":"success",
+                    "message":"cidadao deletado"
+                }), 204
 
         else:
             return jsonify({
