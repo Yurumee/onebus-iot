@@ -2,7 +2,7 @@ from config import db
 from flask import Blueprint, jsonify, render_template, request
 from datetime import datetime
 from models.trajeto import Trajeto
-from models.pontoTrajeto import PontoTrajeto
+from models.pontoViagem import PontoViagem
 from models.trajetos_cidadaos import TrajetosCidadaos
 from models.motorista import Motorista
 from models.carro import Carro
@@ -344,34 +344,28 @@ def post_ponto_trajeto():
     OBS: O GET está presente apenas para debug. Necessário retirar
     """
 
-    data = request.get_json() # todos os dados recebidos do embarcado
-    latitude_embarcado = data.get('latitude') # latitude passada pelo embarcado
-    longitude_embarcado = data.get('longitude') # longitude passada pelo embarcado
-    id_trajeto = int(data.get('id-trajeto')) # id do trajeto ao qual o ponto pertence
+    data = request.get_json()
+    latitude_ponto = data.get('latitude')
+    longitude_ponto = data.get('longitude')
+    placa_carro = data.get('placa-carro')
+    datahora = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S") # possivel refactor
 
-    # id_trajeto = 1 # mock do id do trajeto ao qual o ponto pertence
-    trajeto_desejado = Trajeto.query.filter_by(id_trajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
-    # print(trajeto_desejado.trajeto_ponto) # debug
-
-    new_ponto = PontoTrajeto(
-        # latitude='-14.000026', # dado mockado
-        # longitude='15.000047', # dado mockado
-        latitude=latitude_embarcado,
-        longitude=longitude_embarcado,
-        trajeto=trajeto_desejado
+    new_ponto_viagem = PontoViagem(
+        latitude_ponto=latitude_ponto,
+        longitude_ponto=longitude_ponto,
+        data=datahora.date(),
+        hora=datahora.time()
     )
-
     try:
-        db.session.add(new_ponto)
+        carro_desejado = Carro.query.filter_by(placa=placa_carro).first()
+        carro_desejado.viagem_pontos.append(new_ponto_viagem)
+        db.session.add(new_ponto_viagem)
         db.session.commit()
 
-        '''
-            NÃO POSSUI RETURN
-        '''
         return 201
-        
+    
     except Exception as e:
         return jsonify({
             "status": "error",
-            "message": f"Erro ao inserir trajeto: {str(e)}"
+            "message": f"Erro ao inserir novo ponto de viagem: {str(e)}"
         }), 400
