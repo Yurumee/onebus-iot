@@ -77,7 +77,7 @@ def post_new_ponto_viagem():
 @view_viagem.route('/alterar-ponto', methods=['GET', 'PATCH'])
 def edit_ponto_viagem():
     """
-    Rota para editar um ponto de viagem específico com o id informado
+    Rota para editar um ponto de trajeto específico com o id informado
 
     Método:
         Get, Patch
@@ -87,14 +87,14 @@ def edit_ponto_viagem():
     """
     if request.method == 'PATCH':
         data = request.get_json()
-        id_ponto = data.get('id-ponto-viagem')
-        ponto_desejado = PontoViagem.query.filter_by(id_ponto_viagem=id_ponto).first()
+        id_ponto = data.get('id-ponto-trajeto')
+        ponto_desejado = PontoTrajeto.query.filter_by(id_ponto_traj=id_ponto).first()
 
         if ponto_desejado:
             latitude_ponto = data.get('latitude')
             longitude_ponto = data.get('longitude')
-            new_placa = data.get('placa-carro')
-            datahora = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
+            new_trajeto = data.get('trajeto-id')
+            tipo_ponto = data.get('tipo-ponto')
 
             if latitude_ponto != ponto_desejado.latitude_ponto and latitude_ponto != None:
                 ponto_desejado.latitude_ponto = latitude_ponto
@@ -104,25 +104,17 @@ def edit_ponto_viagem():
                 ponto_desejado.longitude_ponto = longitude_ponto
                 db.session.commit()
 
-            if datahora.date() != ponto_desejado.data and datahora.date() != None:
-                ponto_desejado.data = datahora.date()
-                db.session.commit()
+            if new_trajeto != ponto_desejado.trajeto_id and new_trajeto != None:
+                trajeto_desejado = Trajeto.query.filter_by(id_trajeto=new_trajeto).first()
 
-            if datahora.time() != ponto_desejado.hora and datahora.time() != None:
-                ponto_desejado.hora = datahora.time()
-                db.session.commit()
-
-            if new_placa != ponto_desejado.placa_carro and new_placa != None:
-                carro_desejado = Carro.query.filter_by(placa=new_placa).first()
-
-                if carro_desejado:
-                    carro_desejado.viagem_pontos.append(ponto_desejado)
+                if trajeto_desejado:
+                    trajeto_desejado.trajeto_ponto.append(ponto_desejado)
                     db.session.commit()
 
                 else:
                     return jsonify({
                         "status":"not found",
-                        "message":"carro nao encontrado"
+                        "message":"trajeto nao encontrado"
                     }), 404
             
             return jsonify({
@@ -137,4 +129,4 @@ def edit_ponto_viagem():
             }), 404
 
 
-    return render_template('editar_ponto_viagem.html'), 302
+    return render_template('editar_ponto_trajeto.html'), 302
