@@ -1,17 +1,16 @@
 from config import db, app
 from flask import Blueprint, jsonify, render_template, request
 # from sqlalchemy import select
-from datetime import datetime
-# from models.trajeto import Trajeto
-from models.carro import Carro
-from models.pontoViagem import PontoViagem
+# from datetime import datetime
+from models.trajeto import Trajeto
+from models.pontoTrajeto import PontoTrajeto
 
 view_viagem = Blueprint('view_viagem', __name__)
 
 @view_viagem.route('/', methods=['GET', 'POST'])
 def post_new_ponto_viagem():
     """
-    Rota para cadastrar um ponto de viagem no banco de dados.
+    Rota para cadastrar um ponto de trajeto no banco de dados.
 
     Métodos:
         GET, POST
@@ -23,45 +22,57 @@ def post_new_ponto_viagem():
 
     if request.method == 'POST':
         data = request.get_json()
-        latitude_ponto = data.get('latitude')
-        longitude_ponto = data.get('longitude')
-        placa_carro = data.get('placa-carro')
-        datahora = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
-
-        # horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
-
-        new_ponto_viagem = PontoViagem(
-            latitude_ponto=latitude_ponto,
-            longitude_ponto=longitude_ponto,
-            data=datahora.date(),
-            hora=datahora.time()
-        )
+        id_trajeto = data.get('id-trajeto')
 
         try:
-            carro_desejado = Carro.query.filter_by(placa=placa_carro).first()
-            carro_desejado.viagem_pontos.append(new_ponto_viagem)
-
-            db.session.add(new_ponto_viagem)
-            db.session.commit()
-
-            return jsonify({
-                "status": "success",
-                "message": "Trajeto inserido com sucesso.",
-                "trajeto": {
-                    "latitude_ponto": new_ponto_viagem.latitude_ponto,
-                    "longitude_ponto": new_ponto_viagem.longitude_ponto,
-                    "data": new_ponto_viagem.data,
-                    "hora": new_ponto_viagem.hora
-                }
-            }), 201
-        
+            trajeto_desejado = Trajeto.query.filter_by(trajeto_id=id_trajeto).first()
         except Exception as e:
             return jsonify({
-                "status": "error",
-                "message": f"Erro ao inserir novo ponto de viagem: {str(e)}"
+                "status":"error",
+                "message":f"{str(e)}"
             }), 400
         
-    return render_template('pagina_cadastrar_ponto_viagem.html'), 302
+        if trajeto_desejado:
+            
+            latitude_ponto = data.get('latitude')
+            longitude_ponto = data.get('longitude')
+            tipo_ponto = data.get('tipo-ponto')
+
+            try:
+                new_ponto_trajeto = PontoTrajeto(
+                latitude_ponto=latitude_ponto,
+                longitude_ponto=longitude_ponto,
+                tipo_ponto=tipo_ponto
+                )
+
+                trajeto_desejado.trajeto_ponto.append(new_ponto_trajeto)
+
+                db.session.add(new_ponto_trajeto)
+                db.session.commit()
+
+                return jsonify({
+                    "status": "success",
+                    "message": "Trajeto inserido com sucesso.",
+                    "trajeto": {
+                        "latitude_ponto": new_ponto_trajeto.latitude_ponto,
+                        "longitude_ponto": new_ponto_trajeto.longitude_ponto,
+                        "tipo": new_ponto_trajeto.tipo_ponto
+                    }
+                }), 201
+        
+            except Exception as e:
+                return jsonify({
+                    "status": "error",
+                    "message": f"Erro ao inserir novo ponto de trajeto: {str(e)}"
+                }), 400
+
+        else:
+            return jsonify({
+                "status":"not found",
+                "message":"o trajeto desejado nao existe"
+            }), 404
+        
+    return render_template('pagina_cadastrar_ponto_trajeto.html'), 302
 
 @view_viagem.route('/alterar-ponto', methods=['GET', 'PATCH'])
 def edit_ponto_viagem():

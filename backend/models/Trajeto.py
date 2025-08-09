@@ -8,7 +8,7 @@ from sqlalchemy import String, ForeignKey, Integer
 if TYPE_CHECKING:
     from models.carro import Carro
     from models.pontoTrajeto import PontoTrajeto
-    from models.cidadao import Cidadao
+    # from models.cidadao import Cidadao
 
 class Trajeto(db.Model):
     __tablename__ = 'trajeto'

@@ -333,7 +333,7 @@ def delete_vinculo_cidadao():
 @view_trajeto.route('/post-point', methods=['POST'])
 def post_ponto_trajeto():
     """
-    Rota para postar pontos de um trajeto vindos do embarcado
+    Rota para postar pontos de uma viagem realizada vindos do embarcado
     
     Método: 
         POST
