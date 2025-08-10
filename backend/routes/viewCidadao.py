@@ -26,6 +26,7 @@ def post_new_cidadao():
         cpf_cidadao = data.get('cidadao-cpf')
         nome_cidadao = data.get('cidadao-nome')
         senha = data.get('senha')
+        tipo_usuario = data.get('tipo-usuario')
 
         # cpf = '789.456.123-00'
         # nome = 'Alice Mock'
@@ -50,7 +51,7 @@ def post_new_cidadao():
             cpf=cpf_cidadao,
             nome_completo=nome_cidadao,
             senha=senha,
-            tipo_usuario='cidadao'
+            tipo_usuario=tipo_usuario
         )
 
         db.session.add(new_cidadao)

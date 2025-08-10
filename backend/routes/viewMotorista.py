@@ -68,8 +68,19 @@ def get_motorista():
         Página listando todos os motoristas
     """
     motoristas = Motorista.query.all()
-    
-    return render_template('todos_motoristas.html', all_motoristas=motoristas), 302
+
+    # DEBUG
+    resposta_json = {}
+
+    for motorista in motoristas:
+        resposta_json[motorista.cpf] = {"nome completo":motorista.nome_completo, "cpf":motorista.cpf, "senha":motorista.senha, "tipo usuario":motorista.tipo_usuario, "placa do carro":motorista.carro_placa, "cnh":motorista.cnh}
+
+    return jsonify({
+        "status":"success",
+        "message":"motoristas encontrados",
+        "json":resposta_json
+    }), 200
+    # return render_template('todos_motoristas.html', all_motoristas=motoristas), 302
 
 @view_motorista.route('/motorista-especifico', methods=['GET'])
 def get_especific_motorista():
@@ -94,7 +105,17 @@ def get_especific_motorista():
         }), 400
     
     if motorista:
-        return render_template('motorista_especifico.html', motorista=motorista), 302
+        # DEBUG
+        resposta_json = {}
+        resposta_json[motorista.cpf] = {"nome completo":motorista.nome_completo, "cpf":motorista.cpf, "senha":motorista.senha, "tipo usuario":motorista.tipo_usuario, "placa do carro":motorista.carro_placa, "cnh":motorista.cnh}
+
+        return jsonify({
+            "status":"success",
+            "message":"motoristas encontrados",
+            "json":resposta_json
+        }), 200
+        # return render_template('motorista_especifico.html', motorista=motorista), 302
+    
     else:
         return jsonify({
             'status':'error',

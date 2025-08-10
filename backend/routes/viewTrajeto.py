@@ -27,7 +27,7 @@ def post_new_trajeto():
         servico_prestado = data.get('servico-prestado')
         origem = data.get('origem')
         destino = data.get('destino')
-        placa = data.get('placa')
+        placa = data.get('placa-carro')
         datahora_estimado = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
         # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
 
@@ -88,7 +88,7 @@ def edit_trajeto():
 
     if request.method == 'PATCH':
         data = request.get_json()
-        trajeto_id = data.get('id-trajeto')
+        trajeto_id = data.get('trajeto-id')
         
         try:
             trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
@@ -103,7 +103,7 @@ def edit_trajeto():
             new_servico = data.get('servico-prestado')
             new_ponto_origem = data.get('ponto-origem')
             new_ponto_destino = data.get('ponto-destino')
-            new_horario = data.get('horario-estimado')
+            new_horario = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S").time()
             new_placa = data.get('placa-carro')
 
             if new_servico != trajeto_desejado.servico_prestado and new_servico != None:
@@ -157,7 +157,7 @@ def delete_trajeto():
     if request.method == 'DELETE':
         
         data = request.get_json()
-        trajeto_id = data.get('id-trajeto')
+        trajeto_id = data.get('trajeto-id')
 
         try:
             trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
@@ -197,14 +197,33 @@ def get_trajeto():
     Retorno:
         Renderiza o template 'trajetos.html' com todos os trajetos cadastrados.
     """
-    trajeto_mostrar = Trajeto.query.all()
+    trajetos = Trajeto.query.all()
+
+    # DEBUG
+    resposta_json = {}
+
+    for trajeto in trajetos:
+        resposta_json[trajeto.id_trajeto] = {
+            "id":trajeto.id_trajeto, 
+            "serviço prestado":trajeto.servico_prestado, 
+            "ponto de origem":trajeto.ponto_origem, 
+            "ponto de destino":trajeto.ponto_destino, 
+            "horario estimado":str(trajeto.horario_estimado), 
+            "placa carro":trajeto.carro_placa
+            }
+
+    return jsonify({
+        "status":"success",
+        "message":"trajetos encontrados",
+        "json":resposta_json
+    }), 200
     
-    return render_template('trajetos.html', all_trajetos=trajeto_mostrar), 302
+    # return render_template('trajetos.html', all_trajetos=trajeto_mostrar), 302
 
 @view_trajeto.route('/rota-motorista', methods=['GET'])
 def get_especific_trajeto():
     """
-    Rota para exibir trajetos específicos com informações de  um motorista específico.
+    Rota para exibir trajetos específicos com informações de um motorista específico.
 
     Método:
         GET
@@ -218,8 +237,7 @@ def get_especific_trajeto():
 
     if motorista_desejado:
         try:
-            trajeto_teste = db.session.query(Trajeto, Motorista).join(Motorista, Trajeto.carro_placa == Motorista.carro_placa).all()
-            # print(trajeto_teste)
+            trajeto = db.session.query(Trajeto, Motorista).join(Motorista, Trajeto.carro_placa == Motorista.carro_placa).where(Motorista.carro_placa == motorista_desejado.carro_placa)
             
         except Exception as e:
             return jsonify({
@@ -227,7 +245,17 @@ def get_especific_trajeto():
             "message": f"Erro ao inserir trajeto: {str(e)}"
         }), 400
 
-        return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste), 302
+        resposta_json = {}
+        for trajeto in trajeto:
+            resposta_json[trajeto[0].id_trajeto] = {"trajeto_id": trajeto[0].id_trajeto, "carro_placa": trajeto[0].carro_placa, "ponto_origem": trajeto[0].ponto_origem, "ponto_destino": trajeto[0].ponto_destino, "horario_estimado": str(trajeto[0].horario_estimado), "motorista responsavel": trajeto[1].nome_completo, "cnh": trajeto[1].cnh}
+
+        return jsonify({
+            "status": "success",
+            "message": "Trajetos encontrados.",
+            "trajetos": resposta_json,
+        }), 200
+
+        # return render_template('trajetos_motorista.html', especific_trajeto=trajeto), 302
     
     else:
         return jsonify({
@@ -362,7 +390,7 @@ def post_ponto_viagem():
         db.session.add(new_ponto_viagem)
         db.session.commit()
 
-        return 201
+        return 204
     
     except Exception as e:
         return jsonify({

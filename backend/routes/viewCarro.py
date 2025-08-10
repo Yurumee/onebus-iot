@@ -4,6 +4,7 @@ from models.carro import Carro
 from models.motorista import Motorista
 from models.trajeto import Trajeto
 from models.pontoViagem import PontoViagem
+from models.trajetos_cidadaos import TrajetosCidadaos
 
 view_carro = Blueprint('view_carro', __name__)
 
@@ -44,9 +45,9 @@ def post_new_car():
                 tipo_veiculo=tipo_carro
             )
 
-            if data.get('longitude-atual') and data.get('latitude-atual'):
-                novo_carro.longitude_atual = data.get('longitude-atual')
-                novo_carro.latitude_atual = data.get('latitude-atual')
+            if data.get('longitude') and data.get('latitude'):
+                novo_carro.longitude_atual = data.get('longitude')
+                novo_carro.latitude_atual = data.get('latitude')
             
             try:
                 db.session.add(novo_carro)
@@ -77,7 +78,19 @@ def get_carro():
         Página listando todos os carros
     """
     carros = Carro.query.all()
-    return render_template('todos_carros.html', all_carros=carros), 302
+    
+    # DEBUG
+    resposta_json = {}
+
+    for carro in carros:
+        resposta_json[carro.placa] = {"placa":carro.placa, "latitude atual":carro.latitude_atual, "longitude atual":carro.longitude_atual, "tipo veiculo":carro.tipo_veiculo}
+
+    return jsonify({
+        "status":"success",
+        "message":"carros encontrados",
+        "json":resposta_json
+    }), 200
+    # return render_template('todos_carros.html', all_carros=carros), 302
 
 @view_carro.route('/carro-especifico', methods=['GET'])
 def get_especific_carro():
@@ -94,7 +107,7 @@ def get_especific_carro():
     data = request.get_json()
     placa_desejada = data.get('placa-carro')
     try:
-        carro = Motorista.query.filter_by(placa=placa_desejada).first()
+        carro = Carro.query.filter_by(placa=placa_desejada).first()
     except Exception as e:
         return jsonify({
             'status':'error',
@@ -102,7 +115,15 @@ def get_especific_carro():
         }), 400
     
     if carro:
-        return render_template('carro_especifico.html', carro=carro), 302
+        resposta_json = {}
+        resposta_json[carro.placa] = {"placa":carro.placa, "latitude atual":carro.latitude_atual, "longitude atual":carro.longitude_atual, "tipo veiculo":carro.tipo_veiculo}
+        
+        return jsonify({
+        "status":"success",
+        "message":"carro encontrado",
+        "json":resposta_json
+    }), 200
+        # return render_template('carro_especifico.html', carro=carro), 302
     
     else:
         return jsonify({
@@ -190,9 +211,16 @@ def delete_carro():
 
         if carro_desejado:
             try:
+                trajeto = Trajeto.query.filter_by(carro_placa = placa_carro).first()
                 db.session.query(Trajeto).where(Trajeto.carro_placa == placa_carro).delete()
                 db.session.query(PontoViagem).where(PontoViagem.carro_placa == placa_carro).delete()
-                db.session.query(Motorista).where(Motorista.carro_placa == placa_carro).delete()
+                db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.trajeto_id == trajeto.id_trajeto).delete()
+
+                motoristas = db.session.query(Motorista).where(Motorista.carro_placa == placa_carro)
+
+                for motorista in motoristas:
+                    motorista.carro_placa = None
+
 
                 Carro.query.filter_by(placa=placa_carro).delete()
             
@@ -226,7 +254,7 @@ def register_carro():
     if request.method == 'POST':
         data = request.get_json()
         cnh_motorista = data.get('motorista-cnh')
-        placa_motorista = data.get('placa')
+        placa_motorista = data.get('placa-carro')
 
         motorista = Motorista.query.filter_by(cnh=cnh_motorista).first()
         carro_desejado = Carro.query.filter_by(placa=placa_motorista).first()
@@ -301,7 +329,7 @@ def post_point_carro():
 
             db.session.commit()
 
-            return 200
+            return 204
         
         except Exception as e:
             return jsonify({
