@@ -331,7 +331,7 @@ def delete_vinculo_cidadao():
     return render_template('pagina_deletar_vinculo.html'), 302
 
 @view_trajeto.route('/post-point', methods=['POST'])
-def post_ponto_trajeto():
+def post_ponto_viagem():
     """
     Rota para postar pontos de uma viagem realizada vindos do embarcado
     

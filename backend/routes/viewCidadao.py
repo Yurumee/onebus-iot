@@ -82,7 +82,18 @@ def get_cidadao():
         
     cidadaos = Cidadao.query.all()
 
-    return render_template('todos-cidadaos.html', all_cidadao=cidadaos), 302
+    # DEBUG
+    resposta_json = {}
+
+    for cidadao in cidadaos:
+        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+
+    return jsonify({
+        "status":"success",
+        "message":"cidadaos encontrados",
+        "json":resposta_json
+    }), 200
+    # return render_template('todos-cidadaos.html', all_cidadao=cidadaos), 302
 
 @view_cidadao.route('/cidadao-especifico', methods=['GET'])
 def get_especific_cidadao():
@@ -108,7 +119,17 @@ def get_especific_cidadao():
         }), 400
 
     if cidadao:
-        return render_template('cidadao_especifico.html', cidadao=cidadao), 302
+        resposta_json = {}
+
+        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+
+        return jsonify({
+                "status":"success",
+                "message":"cidadao encontrado",
+                "json":resposta_json
+            }), 200
+        # return render_template('cidadao_especifico.html', cidadao=cidadao), 302
+    
     else:
         return jsonify({
             'status':'error',

@@ -8,7 +8,7 @@ from models.pontoTrajeto import PontoTrajeto
 view_viagem = Blueprint('view_viagem', __name__)
 
 @view_viagem.route('/', methods=['GET', 'POST'])
-def post_new_ponto_viagem():
+def post_new_ponto_trajeto():
     """
     Rota para cadastrar um ponto de trajeto no banco de dados.
 
@@ -75,7 +75,7 @@ def post_new_ponto_viagem():
     return render_template('pagina_cadastrar_ponto_trajeto.html'), 302
 
 @view_viagem.route('/alterar-ponto', methods=['GET', 'PATCH'])
-def edit_ponto_viagem():
+def edit_ponto_trajeto():
     """
     Rota para editar um ponto de trajeto específico com o id informado
 
@@ -130,3 +130,43 @@ def edit_ponto_viagem():
 
 
     return render_template('editar_ponto_trajeto.html'), 302
+
+@view_viagem.route('/todos', methods=['GET'])
+def get_pontos_trajeto():
+    """
+    Rota para listar todos os ponto de trajeto de um trajeto específico com o id informado
+
+    Método:
+        Get
+
+    Retorno:
+        Página mostrando ponto editado
+    """
+
+    data = request.get_json()
+    trajeto_id = data.get('trajeto-id')
+    trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
+
+    if trajeto_desejado:
+        pontos_trajeto = db.session.query(Trajeto, PontoTrajeto).join(PontoTrajeto, Trajeto.id_trajeto == PontoTrajeto.trajeto_id).all()
+
+        print(pontos_trajeto)
+
+        # resposta_json = {}
+        # for ponto in pontos_trajeto:
+        #     resposta_json[ponto[0].trajeto_id] = {"trajeto_id": ponto[0].trajeto_id, "latitude": ponto[1].latitude, "ponto_origem": ponto[1].ponto_origem, "ponto_destino": ponto[1].ponto_destino, "horario_estimado": str(ponto[1].horario_estimado)}
+
+        return jsonify({
+            "status": "success",
+            "message": "pontos de trajeto encontrados.",
+            # "trajetos": resposta_json,
+        }), 200
+
+    else:
+        return jsonify({
+            "status":"not found",
+            "message":"trajeto nao encontrado"
+        }), 404
+
+
+    # return render_template('pagina_pontos_trajeto.html'), 302
