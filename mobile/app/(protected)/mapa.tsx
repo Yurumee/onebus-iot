@@ -3,8 +3,10 @@ import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native"
 import { AuthContext } from "../utils/authContext";
 import { useRouter } from "expo-router";
 import Map, { Marker, Polyline } from 'react-native-maps'
+import useLocation from "@/hooks/useLocation";
 
 export default function Mapa() {
+  const {latitude, longitude, errorMsg} = useLocation();
   const authContext = useContext(AuthContext);
   const router = useRouter();
 
@@ -16,13 +18,13 @@ export default function Mapa() {
         <Map
           style={StyleSheet.absoluteFill}
           initialRegion={{
-            latitude: -6.263355590562354,
-            longitude: -36.51601747810453,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005
+            latitude: -6.262140,
+            longitude: -36.514332,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02
           }}
         >
-          <Marker coordinate={{latitude: -6.263355590562354, longitude: -36.51601747810453}}/> {/* Teste */}
+          <Marker pinColor={"navy"} coordinate={{latitude: latitude, longitude: longitude}}/> {/* Teste */}
           <Polyline
             coordinates={[{latitude: -6.261005625698471, longitude: -36.51917365752614}, {latitude: -6.2598641808347, longitude: -36.52014332697427}]}
             strokeColor="#000"
