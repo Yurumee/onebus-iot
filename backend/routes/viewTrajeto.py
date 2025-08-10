@@ -1,11 +1,11 @@
-from config import db, app
+from config import db
 from flask import Blueprint, jsonify, render_template, request
-# from sqlalchemy import select
 from datetime import datetime
 from models.trajeto import Trajeto
-from models.pontoTrajeto import PontoTrajeto
+from models.pontoViagem import PontoViagem
 from models.trajetos_cidadaos import TrajetosCidadaos
 from models.motorista import Motorista
+from models.carro import Carro
 from models.cidadao import Cidadao
 
 view_trajeto = Blueprint('view_trajeto', __name__)
@@ -22,50 +22,169 @@ def post_new_trajeto():
         - status, message e dados do trajeto.
         - status error se ocorrer exceção.
     """
-    data = request.get_json()
-    servico_prestado = data.get('servico-prestado')
-    origem = data.get('origem')
-    destino = data.get('destino')
-    placa = data.get('placa')
-    datahora_estimado = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
-    # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
+    if request.method == 'POST':
+        data = request.get_json()
+        servico_prestado = data.get('servico-prestado')
+        origem = data.get('origem')
+        destino = data.get('destino')
+        placa = data.get('placa-carro')
+        datahora_estimado = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S")
+        # print("datahora_estimado (datetime)=", datetime.strptime(datahora_estimado, "%Y-%m-%dT%H:%M:%S")) # Debugging
 
-    # servico_prestado = 'Saude'
-    # origem = 'Cerro Corá'
-    # destino = 'Currais Novos'
-    # placa = '4N4L1C3'
-    # datahora_estimado = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
+        # servico_prestado = 'Saude'
+        # origem = 'Cerro Corá'
+        # destino = 'Currais Novos'
+        # placa = '4N4L1C3'
+        # datahora_estimado = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
 
-    # horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
+        # horarioComeco = datetime(year=2025, month=7, day=4, hour=13, minute=30, second=0)
+
+        new_trajeto = Trajeto(
+            servico_prestado=servico_prestado,
+            ponto_origem=origem,
+            ponto_destino=destino,
+            # carro_placa=placa,
+            horario_estimado=datahora_estimado.time()
+            # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
+            # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
+        )
     
-    new_trajeto = Trajeto(
-        servico_prestado=servico_prestado,
-        ponto_origem=origem,
-        ponto_destino=destino,
-        carro_placa=placa,
-        horarioEstimado=datahora_estimado.time()
-        # motoristaResp=1234567890,      # Descomente se o campo existir no modelo
-        # idEmbarcado='abc123'           # Descomente se o campo existir no modelo
-    )
+        carro_desejado = Carro.query.filter_by(placa=placa).first()
+        carro_desejado.trajeto.append(new_trajeto)
 
-    try:
-        db.session.add(new_trajeto)
-        db.session.commit()
-        return jsonify({
-            "status": "success",
-            "message": "Trajeto inserido com sucesso.",
-            "trajeto": {
-                "servico_prestado": new_trajeto.servico_prestado,
-                "ponto_origem": new_trajeto.ponto_origem,
-                "ponto_destino": new_trajeto.ponto_destino,
-                "horarioEstimado": str(new_trajeto.horarioEstimado)
-            }
-        }), 201
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": f"Erro ao inserir trajeto: {str(e)}"
-        }), 400
+        try:
+            db.session.add(new_trajeto)
+            db.session.commit()
+            return jsonify({
+                "status": "success",
+                "message": "Trajeto inserido com sucesso.",
+                "trajeto": {
+                    "servico_prestado": new_trajeto.servico_prestado,
+                    "ponto_origem": new_trajeto.ponto_origem,
+                    "ponto_destino": new_trajeto.ponto_destino,
+                    "horario_estimado": str(new_trajeto.horario_estimado)
+                }
+            }), 201
+        
+        except Exception as e:
+            return jsonify({
+                "status": "error",
+                "message": f"Erro ao inserir trajeto: {str(e)}"
+            }), 400
+    
+    return render_template('pagina_cadastrar_projeto.html'), 302
+
+@view_trajeto.route('/alterar-trajeto', methods=['GET', 'PATCH'])
+def edit_trajeto():
+    """
+    Rota para editar um trajeto específico com o id informado
+
+    Método:
+        Get, Patch
+
+    Retorno:
+        Página mostrando trajeto editado
+    """
+
+    if request.method == 'PATCH':
+        data = request.get_json()
+        trajeto_id = data.get('trajeto-id')
+        
+        try:
+            trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
+        
+        except Exception as e:
+            return jsonify({
+                "status":"error",
+                "message":f"houve um erro ao tentar pesquisar o trajeto no banco de dados: {str(e)}"
+            }), 400
+
+        if trajeto_desejado:
+            new_servico = data.get('servico-prestado')
+            new_ponto_origem = data.get('ponto-origem')
+            new_ponto_destino = data.get('ponto-destino')
+            new_horario = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S").time()
+            new_placa = data.get('placa-carro')
+
+            if new_servico != trajeto_desejado.servico_prestado and new_servico != None:
+                
+                trajeto_desejado.servico_prestado = new_servico
+                db.session.commit()
+            
+            if new_ponto_origem != trajeto_desejado.ponto_origem and new_ponto_origem != None:
+                
+                trajeto_desejado.ponto_origem = new_ponto_origem
+                db.session.commit()
+            
+            if new_ponto_destino != trajeto_desejado.ponto_destino and new_ponto_destino != None:
+                
+                trajeto_desejado.ponto_destino = new_ponto_destino
+                db.session.commit()
+
+            if new_horario != trajeto_desejado.horario_estimado and new_horario != None:
+                
+                trajeto_desejado.horario_estimado = new_horario
+                db.session.commit()
+
+            if new_placa != trajeto_desejado.carro_placa and new_placa != None:
+                carro_desejado = Carro.query.filter_by(placa=new_placa).first()
+
+                if carro_desejado:
+                    carro_desejado.trajeto.append(trajeto_desejado)
+                    db.session.commit()
+
+                else:
+                    return jsonify({
+                        "status":"not found",
+                        "message":"carro nao existe"
+                    }), 404
+
+            return jsonify({
+                "status":"success",
+                "message":"update realizado com sucesso"
+            }), 200
+
+        else:
+            return jsonify({
+                "status":"not found",
+                "message":"o trajeto não existe"
+            }), 404
+    
+    return render_template('pagina_editar_trajeto.html'), 302
+
+@view_trajeto.route('/excluir-trajeto', methods=['GET','DELETE'])
+def delete_trajeto():
+    if request.method == 'DELETE':
+        
+        data = request.get_json()
+        trajeto_id = data.get('trajeto-id')
+
+        try:
+            trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
+        except Exception as e:
+            return jsonify({
+                "status":"error",
+                "message":f"{str(e)}"
+            })
+        
+        if trajeto_desejado:
+            db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.trajeto_id == trajeto_desejado.id_trajeto).delete()
+            Trajeto.query.filter_by(id_trajeto=trajeto_id).delete()
+
+            db.session.commit()
+            return jsonify({
+                "status":"success",
+                "message":"trajeto deletado com sucesso"
+            })
+
+        else:
+            return jsonify({
+                "status":"not found",
+                "message":"o trajeto nao existe"
+            })
+
+    else:
+        return render_template('pagina_deletar_trajeto.html')
 
 @view_trajeto.route('/todos', methods=['GET'])
 def get_trajeto():
@@ -78,14 +197,33 @@ def get_trajeto():
     Retorno:
         Renderiza o template 'trajetos.html' com todos os trajetos cadastrados.
     """
-    trajeto_mostrar = Trajeto.query.all()
+    trajetos = Trajeto.query.all()
+
+    # DEBUG
+    resposta_json = {}
+
+    for trajeto in trajetos:
+        resposta_json[trajeto.id_trajeto] = {
+            "id":trajeto.id_trajeto, 
+            "serviço prestado":trajeto.servico_prestado, 
+            "ponto de origem":trajeto.ponto_origem, 
+            "ponto de destino":trajeto.ponto_destino, 
+            "horario estimado":str(trajeto.horario_estimado), 
+            "placa carro":trajeto.carro_placa
+            }
+
+    return jsonify({
+        "status":"success",
+        "message":"trajetos encontrados",
+        "json":resposta_json
+    }), 200
     
-    return render_template('trajetos.html', all_trajetos=trajeto_mostrar)
+    # return render_template('trajetos.html', all_trajetos=trajeto_mostrar), 302
 
 @view_trajeto.route('/rota-motorista', methods=['GET'])
 def get_especific_trajeto():
     """
-    Rota para exibir trajetos específicos com informações de  um motorista específico.
+    Rota para exibir trajetos específicos com informações de um motorista específico.
 
     Método:
         GET
@@ -99,8 +237,7 @@ def get_especific_trajeto():
 
     if motorista_desejado:
         try:
-            trajeto_teste = db.session.query(Trajeto, Motorista).join(Motorista, Trajeto.carro_placa == Motorista.carro_placa).all()
-            print(trajeto_teste)
+            trajeto = db.session.query(Trajeto, Motorista).join(Motorista, Trajeto.carro_placa == Motorista.carro_placa).where(Motorista.carro_placa == motorista_desejado.carro_placa)
             
         except Exception as e:
             return jsonify({
@@ -108,7 +245,17 @@ def get_especific_trajeto():
             "message": f"Erro ao inserir trajeto: {str(e)}"
         }), 400
 
-        return render_template('trajetos_motorista.html', especific_trajeto=trajeto_teste), 302
+        resposta_json = {}
+        for trajeto in trajeto:
+            resposta_json[trajeto[0].id_trajeto] = {"trajeto_id": trajeto[0].id_trajeto, "carro_placa": trajeto[0].carro_placa, "ponto_origem": trajeto[0].ponto_origem, "ponto_destino": trajeto[0].ponto_destino, "horario_estimado": str(trajeto[0].horario_estimado), "motorista responsavel": trajeto[1].nome_completo, "cnh": trajeto[1].cnh}
+
+        return jsonify({
+            "status": "success",
+            "message": "Trajetos encontrados.",
+            "trajetos": resposta_json,
+        }), 200
+
+        # return render_template('trajetos_motorista.html', especific_trajeto=trajeto), 302
     
     else:
         return jsonify({
@@ -134,13 +281,13 @@ def register_cidadao():
         cpf_desejado = data.get('cidadao-cpf')
         trajeto_id = data.get('id-trajeto')
 
-        print(f'teste de cpf: {cpf_desejado}')
+        # print(f'teste de cpf: {cpf_desejado}')
 
         trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
         cidadao_desejado = Cidadao.query.filter_by(cpf=cpf_desejado).first()
         
-        print(f'teste de cpf: {cidadao_desejado}')
-        print(f'teste de trajeto: {trajeto_desejado}')
+        # print(f'teste de cpf: {cidadao_desejado}')
+        # print(f'teste de trajeto: {trajeto_desejado}')
 
         if cidadao_desejado == None or trajeto_desejado == None:
             return jsonify({
@@ -167,7 +314,7 @@ def register_cidadao():
                     db.session.add(trajeto_vinculado)
                     db.session.commit()
                     
-                    # return render_template('pagina_vincular_cidadao.html')
+                    # return render_template('pagina_vincular_cidadao.html'), 302
                     return jsonify({
                         'status':'success',
                         'message':'cidadao vinculado ao trajeto'
@@ -180,7 +327,7 @@ def register_cidadao():
                     }), 400
 
     
-    return render_template('pagina_vincular_cidadao.html')
+    return render_template('pagina_vincular_cidadao.html'), 302
 
 @view_trajeto.route('/desvincular-cidadao', methods=['GET', 'POST'])
 def delete_vinculo_cidadao():
@@ -192,7 +339,7 @@ def delete_vinculo_cidadao():
 
         vinculo_desejado = TrajetosCidadaos.query.filter(TrajetosCidadaos.cidadao_cpf==cpf_cidadao, TrajetosCidadaos.trajeto_id==trajeto_id).first()
 
-        print(f'vinculo: {vinculo_desejado}')
+        # print(f'vinculo: {vinculo_desejado}')
 
         if vinculo_desejado:
             TrajetosCidadaos.query.filter(TrajetosCidadaos.cidadao_cpf==cpf_cidadao, TrajetosCidadaos.trajeto_id==trajeto_id).delete()
@@ -209,13 +356,12 @@ def delete_vinculo_cidadao():
                 'message':'vinculo nao existe'
             })
 
-    
-    return render_template('pagina_deletar_vinculo.html')
+    return render_template('pagina_deletar_vinculo.html'), 302
 
 @view_trajeto.route('/post-point', methods=['POST'])
-def post_ponto_trajeto():
+def post_ponto_viagem():
     """
-    Rota para postar pontos de um trajeto vindos do embarcado
+    Rota para postar pontos de uma viagem realizada vindos do embarcado
     
     Método: 
         POST
@@ -226,45 +372,28 @@ def post_ponto_trajeto():
     OBS: O GET está presente apenas para debug. Necessário retirar
     """
 
-    data = request.get_json() # todos os dados recebidos do embarcado
-    latitude_embarcado = data.get('latitude') # latitude passada pelo embarcado
-    longitude_embarcado = data.get('longitude') # longitude passada pelo embarcado
-    id_trajeto = int(data.get('id-trajeto')) # id do trajeto ao qual o ponto pertence
+    data = request.get_json()
+    latitude_ponto = data.get('latitude')
+    longitude_ponto = data.get('longitude')
+    placa_carro = data.get('placa-carro')
+    datahora = datetime.strptime(data.get('datahora-estimado'), "%Y-%m-%dT%H:%M:%S") # possivel refactor
 
-    # id_trajeto = 1 # mock do id do trajeto ao qual o ponto pertence
-    trajeto_desejado = Trajeto.query.filter_by(id_trajeto=id_trajeto).first() # Objeto Trajeto do id correspondente
-    # print(trajeto_desejado.trajeto_ponto) # debug
-
-    new_ponto = PontoTrajeto(
-        # latitude='-14.000026', # dado mockado
-        # longitude='15.000047', # dado mockado
-        latitude=latitude_embarcado,
-        longitude=longitude_embarcado,
-        trajeto=trajeto_desejado
+    new_ponto_viagem = PontoViagem(
+        latitude_ponto=latitude_ponto,
+        longitude_ponto=longitude_ponto,
+        data=datahora.date(),
+        hora=datahora.time()
     )
-
     try:
-        db.session.add(new_ponto)
+        carro_desejado = Carro.query.filter_by(placa=placa_carro).first()
+        carro_desejado.viagem_pontos.append(new_ponto_viagem)
+        db.session.add(new_ponto_viagem)
         db.session.commit()
 
-        '''
-            NÃO POSSUI RETURN
-        '''
-        return 201
-
-        # return jsonify({
-        #     "status": "success",
-        #     "message": "Ponto de Trajeto inserido com sucesso.",
-        #     "trajeto": {
-        #         "latitude": MOCKPontoTrajeto.latitude,
-        #         "longitude": MOCKPontoTrajeto.longitude,
-        #         "id do trajeto": MOCKPontoTrajeto.trajeto_id,
-        #         # "horarioEstimado": str(MOCKTrajeto.horarioEstimado) # caso exista, descomentar
-        #     }
-        # }), 201
-        
+        return 204
+    
     except Exception as e:
         return jsonify({
             "status": "error",
-            "message": f"Erro ao inserir trajeto: {str(e)}"
+            "message": f"Erro ao inserir novo ponto de viagem: {str(e)}"
         }), 400

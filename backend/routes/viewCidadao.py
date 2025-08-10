@@ -1,5 +1,4 @@
-import json
-from config import app, db
+from config import db
 from flask import Blueprint, request, jsonify, render_template
 from models.cidadao import Cidadao
 from models.trajetos_cidadaos import TrajetosCidadaos
@@ -27,6 +26,7 @@ def post_new_cidadao():
         cpf_cidadao = data.get('cidadao-cpf')
         nome_cidadao = data.get('cidadao-nome')
         senha = data.get('senha')
+        tipo_usuario = data.get('tipo-usuario')
 
         # cpf = '789.456.123-00'
         # nome = 'Alice Mock'
@@ -51,7 +51,7 @@ def post_new_cidadao():
             cpf=cpf_cidadao,
             nome_completo=nome_cidadao,
             senha=senha,
-            tipo_usuario='cidadao'
+            tipo_usuario=tipo_usuario
         )
 
         db.session.add(new_cidadao)
@@ -64,7 +64,7 @@ def post_new_cidadao():
             "nome": nome_cidadao
         }), 201
     
-    return render_template('pagina_cadastro.html'), 200
+    return render_template('pagina_cadastro.html'), 302
     # return jsonify({
     #     'status':'OK'
     # })
@@ -83,7 +83,18 @@ def get_cidadao():
         
     cidadaos = Cidadao.query.all()
 
-    return render_template('todos-cidadaos.html', all_cidadao=cidadaos)
+    # DEBUG
+    resposta_json = {}
+
+    for cidadao in cidadaos:
+        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+
+    return jsonify({
+        "status":"success",
+        "message":"cidadaos encontrados",
+        "json":resposta_json
+    }), 200
+    # return render_template('todos-cidadaos.html', all_cidadao=cidadaos), 302
 
 @view_cidadao.route('/cidadao-especifico', methods=['GET'])
 def get_especific_cidadao():
@@ -109,14 +120,24 @@ def get_especific_cidadao():
         }), 400
 
     if cidadao:
-        return render_template('cidadao_especifico.html', cidadao=cidadao)
+        resposta_json = {}
+
+        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+
+        return jsonify({
+                "status":"success",
+                "message":"cidadao encontrado",
+                "json":resposta_json
+            }), 200
+        # return render_template('cidadao_especifico.html', cidadao=cidadao), 302
+    
     else:
         return jsonify({
             'status':'error',
             'message':f'cidadao não encontrado: {str(e)}'
         }), 404
 
-@view_cidadao.route('/trajetos', methods=['GET', 'POST'])
+@view_cidadao.route('/trajetos', methods=['GET'])
 def get_trajetos_vinculados():
     """
     Rota para mostrar os trajetos de um cidadao especifico
@@ -127,48 +148,28 @@ def get_trajetos_vinculados():
     Retorno:
         Página listando os trajetos do cidadao
     """
-    if request.method == 'POST':
-        data = request.get_json()
-        cpf_desejado = data.get('cidadao-cpf')
+    data = request.get_json()
+    cpf_desejado = data.get('cidadao-cpf')
+    cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
+    if cidadao:
+        # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
+        trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
+        
+        resposta_json = {}
+        for trajeto in trajetos_cidadao:
+            resposta_json[trajeto[0].trajeto_id] = {"trajeto_id": trajeto[0].trajeto_id, "carro_placa": trajeto[1].carro_placa, "ponto_origem": trajeto[1].ponto_origem, "ponto_destino": trajeto[1].ponto_destino, "horario_estimado": str(trajeto[1].horario_estimado)}
 
-        cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
-
-        if cidadao:
-            # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
-            trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
-
-            """DEBUG"""
-            # print(f'trajetos: {trajetos_cidadao}')
-
-            # print(f'retorno do trajeto 1 (id do trajeto): {trajetos_cidadao[0][0].trajeto_id}')
-            # print(f'retorno do trajeto 1 (placa): {trajetos_cidadao[0][1].carro_placa}')
-            # print(f'retorno do trajeto 1 (origem): {trajetos_cidadao[0][1].ponto_origem}')
-            # print(f'retorno do trajeto 1 (destino): {trajetos_cidadao[0][1].ponto_destino}')
-            # print(f'retorno do trajeto 1 (horario): {trajetos_cidadao[0][1].horarioEstimado}')
-            
-            # print(f'objeto trajeto no index [1]: {trajetos_cidadao[1]}')
-            
-            # print(f'retorno do trajeto 3 (id do trajeto): {trajetos_cidadao[1][0].trajeto_id}')
-            # print(f'retorno do trajeto 3 (placa): {trajetos_cidadao[1][1].carro_placa}')
-            # print(f'retorno do trajeto 3 (origem): {trajetos_cidadao[1][1].ponto_origem}')
-            # print(f'retorno do trajeto 3 (destino): {trajetos_cidadao[1][1].ponto_destino}')
-            # print(f'retorno do trajeto 3 (horario): {trajetos_cidadao[1][1].horarioEstimado}')
-            
-            resposta_json = {}
-            for trajeto in trajetos_cidadao:
-                resposta_json[trajeto[0].trajeto_id] = {"trajeto_id": trajeto[0].trajeto_id, "carro_placa": trajeto[1].carro_placa, "ponto_origem": trajeto[1].ponto_origem, "ponto_destino": trajeto[1].ponto_destino, "horario_estimado": str(trajeto[1].horario_estimado)}
-
-            return jsonify({
-                "status": "success",
-                "message": "Trajetos encontrados.",
-                "trajetos": resposta_json,
-            }), 200
-
-        else:
-            return jsonify({
-                'status':'error',
-                'message':f'cidadao não encontrado'
-            }), 404
+        return jsonify({
+            "status": "success",
+            "message": "Trajetos encontrados.",
+            "trajetos": resposta_json,
+        }), 200
+    
+    else:
+        return jsonify({
+            'status':'error',
+            'message':f'cidadao não encontrado'
+        }), 404
 
 
 @view_cidadao.route('/alterar-cidadao', methods=['GET', 'PATCH'])
@@ -204,7 +205,7 @@ def edit_cidadao():
         if cidadao:
             new_nome = data.get('cidadao-nome')
 
-            if new_nome != cidadao.nome_completo:
+            if new_nome != cidadao.nome_completo and new_nome != None:
                 try:
                     cidadao.nome_completo = new_nome
                     db.session.commit()
@@ -220,18 +221,18 @@ def edit_cidadao():
                     "message":"update realizado com sucesso"
                 }), 200
             
-            else:
-                return jsonify({
-                    "status":"error",
-                    "message":"o nome precisa ser diferente do atual"
-                }), 400
+            # else:
+            #     return jsonify({
+            #         "status":"error",
+            #         "message":"o nome precisa ser diferente do atual"
+            #     }), 400
         else:
             return jsonify({
                 "status":"error",
                 "message":"cidadao nao encontrado"
             }), 404
         
-    return render_template('pagina_editar_cidadao.html'), 200
+    return render_template('pagina_editar_cidadao.html'), 302
             
 
 @view_cidadao.route('/excluir-cidadao', methods=['GET', 'DELETE'])
@@ -256,6 +257,7 @@ def delete_cidadao():
 
         try:
             cidadao = Cidadao.query.filter_by(cpf=cpf_cidadao).first()
+
         except Exception as e:
             return jsonify({
                 "status":"error",
@@ -264,18 +266,21 @@ def delete_cidadao():
         
         if cidadao:
             try:
+                db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.cidadao_cpf == cpf_cidadao).delete()
                 Cidadao.query.filter_by(cpf=cpf_cidadao).delete()
+
                 db.session.commit()
-                return jsonify({
-                    "status":"success",
-                    "message":"cidadao deletado"
-                }), 204
             
             except Exception as e:
                 return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
             }), 400
+
+            return jsonify({
+                    "status":"success",
+                    "message":"cidadao deletado"
+                }), 204
 
         else:
             return jsonify({

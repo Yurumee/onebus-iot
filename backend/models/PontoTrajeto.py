@@ -13,6 +13,7 @@ class PontoTrajeto(db.Model):
     id_ponto_traj: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     latitude: Mapped[str] = mapped_column(String)
     longitude: Mapped[str] = mapped_column(String)
+    tipo_ponto: Mapped[str] = mapped_column(String)
 
     # coluna de chave estrangeira
     trajeto_id: Mapped[int] = mapped_column(ForeignKey('trajeto.id_trajeto'))
