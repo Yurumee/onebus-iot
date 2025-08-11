@@ -96,12 +96,16 @@ def edit_ponto_trajeto():
             new_trajeto = data.get('trajeto-id')
             tipo_ponto = data.get('tipo-ponto')
 
-            if latitude_ponto != ponto_desejado.latitude_ponto and latitude_ponto != None:
-                ponto_desejado.latitude_ponto = latitude_ponto
+            if latitude_ponto != ponto_desejado.latitude and latitude_ponto != None:
+                ponto_desejado.latitude = latitude_ponto
                 db.session.commit()
-            
-            if longitude_ponto != ponto_desejado.longitude_ponto and longitude_ponto != None:
-                ponto_desejado.longitude_ponto = longitude_ponto
+
+            if longitude_ponto != ponto_desejado.longitude and longitude_ponto != None:
+                ponto_desejado.longitude = longitude_ponto
+                db.session.commit()
+
+            if tipo_ponto != ponto_desejado.tipo_ponto and tipo_ponto != None:
+                ponto_desejado.tipo_ponto = tipo_ponto
                 db.session.commit()
 
             if new_trajeto != ponto_desejado.trajeto_id and new_trajeto != None:
@@ -131,13 +135,13 @@ def edit_ponto_trajeto():
 
     return render_template('editar_ponto_trajeto.html'), 302
 
-@view_viagem.route('/todos', methods=['GET'])
+@view_viagem.route('/rota-especifica', methods=['GET', 'POST'])
 def get_pontos_trajeto():
     """
     Rota para listar todos os ponto de trajeto de um trajeto específico com o id informado
 
     Método:
-        Get
+        Get, Post
 
     Retorno:
         Página mostrando ponto editado
@@ -148,18 +152,23 @@ def get_pontos_trajeto():
     trajeto_desejado = Trajeto.query.filter_by(id_trajeto=trajeto_id).first()
 
     if trajeto_desejado:
-        pontos_trajeto = db.session.query(Trajeto, PontoTrajeto).join(PontoTrajeto, Trajeto.id_trajeto == PontoTrajeto.trajeto_id).all()
+        # pontos_trajeto = db.session.query(PontoTrajeto, Trajeto).join(Trajeto, Trajeto.id_trajeto == trajeto_id).all()
+        pontos_trajeto = db.session.query(PontoTrajeto).where(PontoTrajeto.trajeto_id == trajeto_id).all()
 
         print(pontos_trajeto)
 
-        # resposta_json = {}
-        # for ponto in pontos_trajeto:
-        #     resposta_json[ponto[0].trajeto_id] = {"trajeto_id": ponto[0].trajeto_id, "latitude": ponto[1].latitude, "ponto_origem": ponto[1].ponto_origem, "ponto_destino": ponto[1].ponto_destino, "horario_estimado": str(ponto[1].horario_estimado)}
+        resposta_json = {}
+        for ponto in pontos_trajeto:
+            resposta_json[ponto.id_ponto_traj] = {"id_trajeto": ponto.trajeto_id,
+                                                  "latitude": ponto.latitude,
+                                                  "longitude": ponto.longitude,
+                                                  "tipo ponto": ponto.tipo_ponto,  
+                                                  }
 
         return jsonify({
             "status": "success",
             "message": "pontos de trajeto encontrados.",
-            # "trajetos": resposta_json,
+            "trajetos": resposta_json,
         }), 200
 
     else:

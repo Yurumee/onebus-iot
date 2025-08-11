@@ -115,8 +115,7 @@ def get_especific_carro():
         }), 400
     
     if carro:
-        resposta_json = {}
-        resposta_json[carro.placa] = {"placa":carro.placa, "latitude atual":carro.latitude_atual, "longitude atual":carro.longitude_atual, "tipo veiculo":carro.tipo_veiculo}
+        resposta_json = {"placa":carro.placa, "latitude atual":carro.latitude_atual, "longitude atual":carro.longitude_atual, "tipo veiculo":carro.tipo_veiculo}
         
         return jsonify({
         "status":"success",
