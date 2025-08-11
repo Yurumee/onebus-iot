@@ -144,7 +144,7 @@ def get_pontos_trajeto():
         Get, Post
 
     Retorno:
-        Página mostrando ponto editado
+        Página mostrando pontos do trajeto desejado
     """
 
     data = request.get_json()
@@ -175,6 +175,122 @@ def get_pontos_trajeto():
         return jsonify({
             "status":"not found",
             "message":"trajeto nao encontrado"
+        }), 404
+
+
+    # return render_template('pagina_pontos_trajeto.html'), 302
+
+@view_viagem.route('/todos', methods=['GET'])
+def get_all_pontos_trajeto():
+    """
+    Rota para listar todos os ponto de trajeto, independente do trajeto que pertencem
+
+    Método:
+        Get
+
+    Retorno:
+        Página mostrando todos os pontos
+    """
+
+    # data = request.get_json()
+    # trajeto_id = data.get('trajeto-id')
+    pontos_trajeto = PontoTrajeto.query.all()
+
+    if pontos_trajeto:
+        # pontos_trajeto = db.session.query(PontoTrajeto, Trajeto).join(Trajeto, Trajeto.id_trajeto == trajeto_id).all()
+        # pontos_trajeto = db.session.query(PontoTrajeto).where(PontoTrajeto.trajeto_id == trajeto_id).all()
+
+        print(pontos_trajeto)
+
+        resposta_json = {}
+        for ponto in pontos_trajeto:
+            resposta_json[ponto.id_ponto_traj] = {"trajeto_id": ponto.trajeto_id,
+                                                  "latitude": ponto.latitude,
+                                                  "longitude": ponto.longitude,
+                                                  "tipo ponto": ponto.tipo_ponto,  
+                                                  }
+
+        return jsonify({
+            "status": "success",
+            "message": "pontos de trajeto encontrados.",
+            "trajetos": resposta_json,
+        }), 200
+
+    else:
+        return jsonify({
+            "status":"not found",
+            "message":"trajeto nao encontrado"
+        }), 404
+
+
+    # return render_template('pagina_pontos_trajeto.html'), 302
+
+@view_viagem.route('/excluir-ponto', methods=['GET', 'DELETE', 'POST'])
+def delete_pontos_trajeto():
+    """
+    Rota para deletar um ponto de trajeto especifico
+
+    Método:
+        Get, Delete, Post
+
+    Retorno:
+        Página para deletar ponto
+    """
+
+    data = request.get_json()
+    id_ponto = data.get('id-ponto')
+    ponto_trajeto = PontoTrajeto.query.filter_by(id_ponto_traj=id_ponto).first()
+
+    if ponto_trajeto:
+        db.session.query(PontoTrajeto).filter(PontoTrajeto.id_ponto_traj==id_ponto).delete()
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "ponto de trajeto deletado.",
+            # "trajetos": resposta_json,
+        }), 200
+
+    else:
+        return jsonify({
+            "status":"not found",
+            "message":"ponto nao encontrado"
+        }), 404
+
+
+    # return render_template('pagina_pontos_trajeto.html'), 302
+
+@view_viagem.route('/excluir-todos', methods=['GET', 'DELETE', 'POST'])
+def delete_all_pontos_trajeto():
+    """
+    Rota para deletar todos os pontos de trajeto de um trajeto especifico
+
+    Método:
+        Get, Delete, Post
+
+    Retorno:
+        Página para deletar pontos
+    """
+
+    data = request.get_json()
+    id_trajeto = data.get('id-trajeto')
+    pontos_trajeto = PontoTrajeto.query.filter_by(trajeto_id=id_trajeto).all()
+    print(pontos_trajeto)
+
+    if pontos_trajeto:
+        db.session.query(PontoTrajeto).where(PontoTrajeto.trajeto_id == id_trajeto).delete()
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "pontos de trajeto deletado.",
+            # "trajetos": resposta_json,
+        }), 200
+
+    else:
+        return jsonify({
+            "status":"not found",
+            "message":"pontos nao encontrados"
         }), 404
 
 
