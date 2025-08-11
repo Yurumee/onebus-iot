@@ -92,7 +92,7 @@ def get_carro():
     }), 200
     # return render_template('todos_carros.html', all_carros=carros), 302
 
-@view_carro.route('/carro-especifico', methods=['GET'])
+@view_carro.route('/carro-especifico', methods=['GET', 'POST'])
 def get_especific_carro():
     """
     Rota para mostrar um carro especifico pela placa informada

@@ -220,7 +220,7 @@ def get_trajeto():
     
     # return render_template('trajetos.html', all_trajetos=trajeto_mostrar), 302
 
-@view_trajeto.route('/rota-motorista', methods=['GET'])
+@view_trajeto.route('/rota-motorista', methods=['GET', 'POST'])
 def get_especific_trajeto():
     """
     Rota para exibir trajetos específicos com informações de um motorista específico.
