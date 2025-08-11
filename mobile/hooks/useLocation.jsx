@@ -18,7 +18,6 @@ const useLocation = () => {
 
         if (coords) {
             const { latitude, longitude } = coords;
-            console.log('Latitude e longitude: ', latitude, longitude)
             setLatitude(parseFloat(latitude))
             setLongitude(parseFloat(longitude))
         };

@@ -31,7 +31,6 @@ export default function Index() {
   return (
     <View style={styles.bg}>
       <View style={styles.container}>
-        {/* ALTERAR onPress para remover o trajeto do contexto */}
         <TouchableHighlight underlayColor={'#FFFFFF'} style={styles.fechar} onPress={() => router.replace('/',{})}>
           <FontAwesome name='close' size={28} />
         </TouchableHighlight>
@@ -45,9 +44,10 @@ export default function Index() {
                             <View style={styles.cardContainer}>
                                 <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
                                 <View>
-                                    <Text>Origem: {item.ponto_origem}</Text> {/* ALTERAR */}
-                                    <Text>Destino: {item.ponto_destino}</Text> {/* ALTERAR */}
-                                    <Text>Placa do veículo: {item.carro_placa}</Text> {/* ALTERAR */}
+                                    <Text>Origem: {item.ponto_origem}</Text>
+                                    <Text>Destino: {item.ponto_destino}</Text>
+                                    <Text>Horário: item.horario_estimado</Text>
+                                    <Text>Placa do veículo: {item.carro_placa}</Text>
                                 </View>
                             </View>
                         </TouchableHighlight>
