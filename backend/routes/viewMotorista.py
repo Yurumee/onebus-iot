@@ -82,7 +82,7 @@ def get_motorista():
     }), 200
     # return render_template('todos_motoristas.html', all_motoristas=motoristas), 302
 
-@view_motorista.route('/motorista-especifico', methods=['GET'])
+@view_motorista.route('/motorista-especifico', methods=['GET', 'POST'])
 def get_especific_motorista():
     """
     Rota para mostrar um motorista especifico pela cnh informada

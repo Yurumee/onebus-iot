@@ -16,7 +16,7 @@ def post_new_ponto_trajeto():
         GET, POST
 
     Retorno:
-        - status, message e dados do trajeto.
+        - status, message e dados do ponto.
         - status error se ocorrer exceção.
     """
 
@@ -25,7 +25,7 @@ def post_new_ponto_trajeto():
         id_trajeto = data.get('id-trajeto')
 
         try:
-            trajeto_desejado = Trajeto.query.filter_by(trajeto_id=id_trajeto).first()
+            trajeto_desejado = Trajeto.query.filter_by(id_trajeto=id_trajeto).first()
         except Exception as e:
             return jsonify({
                 "status":"error",
@@ -40,8 +40,8 @@ def post_new_ponto_trajeto():
 
             try:
                 new_ponto_trajeto = PontoTrajeto(
-                latitude_ponto=latitude_ponto,
-                longitude_ponto=longitude_ponto,
+                latitude=latitude_ponto,
+                longitude=longitude_ponto,
                 tipo_ponto=tipo_ponto
                 )
 
@@ -49,22 +49,22 @@ def post_new_ponto_trajeto():
 
                 db.session.add(new_ponto_trajeto)
                 db.session.commit()
-
-                return jsonify({
-                    "status": "success",
-                    "message": "Trajeto inserido com sucesso.",
-                    "trajeto": {
-                        "latitude_ponto": new_ponto_trajeto.latitude_ponto,
-                        "longitude_ponto": new_ponto_trajeto.longitude_ponto,
-                        "tipo": new_ponto_trajeto.tipo_ponto
-                    }
-                }), 201
         
             except Exception as e:
                 return jsonify({
                     "status": "error",
                     "message": f"Erro ao inserir novo ponto de trajeto: {str(e)}"
                 }), 400
+            
+            return jsonify({
+                    "status": "success",
+                    "message": "Trajeto inserido com sucesso.",
+                    "trajeto": {
+                        "latitude_ponto": new_ponto_trajeto.latitude,
+                        "longitude_ponto": new_ponto_trajeto.longitude,
+                        "tipo": new_ponto_trajeto.tipo_ponto
+                    }
+                }), 201
 
         else:
             return jsonify({
