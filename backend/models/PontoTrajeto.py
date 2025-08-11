@@ -10,12 +10,13 @@ if TYPE_CHECKING:
 class PontoTrajeto(db.Model):
     __tablename__ = 'ponto_trajeto'
 
-    idPontoTraj: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id_ponto_traj: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     latitude: Mapped[str] = mapped_column(String)
     longitude: Mapped[str] = mapped_column(String)
+    tipo_ponto: Mapped[str] = mapped_column(String)
 
     # coluna de chave estrangeira
-    trajeto_id: Mapped[int] = mapped_column(ForeignKey('trajeto.idTrajeto'))
+    trajeto_id: Mapped[int] = mapped_column(ForeignKey('trajeto.id_trajeto'))
 
     # relacionamento para acesso na via contrária
     # se comunica com o relacionamento com Trajeto trajeto_ponto

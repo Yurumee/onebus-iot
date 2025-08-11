@@ -14,4 +14,4 @@ def index():
     Retorno:
         Página index do sistema ONEBUS (para teste).
     """
-    return render_template('index.html')
+    return render_template('index.html'), 302
