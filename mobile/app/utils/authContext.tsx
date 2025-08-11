@@ -9,9 +9,10 @@ type AuthState = {
     cpf: any,
     nome: any,
     trajetoId: any,
+    carroId: any,
     logIn: (cpf:any, nome:any) => void,
     logOut: () => void,
-    escolherTrajeto: (trajetoId:any) => void
+    escolherTrajeto: (trajetoId:any, carroId:any) => void
 };
 
 const authStorageKey = 'auth-key';
@@ -23,9 +24,10 @@ export const AuthContext = createContext<AuthState>({
     cpf: '',
     nome: '',
     trajetoId: '',
+    carroId: '',
     logIn: (cpf:any, nome:any) => {},
     logOut: () => {},
-    escolherTrajeto: (trajetoId:any) => {}
+    escolherTrajeto: (trajetoId:any, carroId:any) => {}
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -34,6 +36,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const [cpf, setCpf] = useState('');
     const [nome, setNome] = useState('');
     const [trajetoId, setTrajetoId] = useState('');
+    const [carroId, setCarroId] = useState('');
     const router = useRouter();
 
     const storeAuthState = async (newState: {isLoggedIn: boolean, cpf: any, nome: any}) => {
@@ -45,7 +48,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         };
     };
 
-    const storeTrajetoId = async (newState: {trajetoId: any}) => {
+    const storeTrajetoId = async (newState: {trajetoId: any, carroId:any}) => {
         try {
             const jsonValue = JSON.stringify(newState);
             await AsyncStorage.setItem(trajetoStorageKey, jsonValue);
@@ -73,14 +76,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const logOut = async () => {
         setIsLoggedIn(false);
-        setTrajetoId('')
+        setTrajetoId('');
+        setCarroId('');
         deleteAuthState();
         router.replace('/login');
     };
 
-    const escolherTrajeto = (trajetoId:any) => {
+    const escolherTrajeto = (trajetoId:any, carroId:any) => {
         setTrajetoId(trajetoId);
-        storeTrajetoId({trajetoId: trajetoId});
+        setCarroId(carroId);
+        storeTrajetoId({trajetoId: trajetoId, carroId: carroId});
         router.replace('/',{});
     };
 
@@ -97,7 +102,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
                 };
                 if (valueTrajeto !== null) {
                     const auth = JSON.parse(valueTrajeto);
-                    setTrajetoId(auth.trajetoId)
+                    setTrajetoId(auth.trajetoId);
+                    setCarroId(auth.carroId);
                 };
             } catch (error) {
                 console.log('Error fetching from storage.', error);
@@ -108,7 +114,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isReady, cpf, nome, trajetoId, logIn, logOut, escolherTrajeto }}>
+        <AuthContext.Provider value={{ isLoggedIn, isReady, cpf, nome, trajetoId, carroId, logIn, logOut, escolherTrajeto }}>
             {children}
         </AuthContext.Provider>
     );

@@ -14,7 +14,7 @@ export default function Index() {
 
         <Text style={styles.nome}>{authContext.nome}</Text> {/* ALTERAR */}
 
-        <Text style={styles.nome}>Trajeto Selecionado (linha para teste): {authContext.trajetoId}</Text> {/* REMOVER */}
+        <Text style={styles.nome}>{authContext.trajetoId} {authContext.carroId}</Text> {/* REMOVER */}
 
         <TouchableHighlight underlayColor={'#D9BD3F'} style={styles.botaoMapa} onPress={() => router.replace('/mapa',{})}>
             <Text style={styles.textoBotao}>VER MAPA</Text>

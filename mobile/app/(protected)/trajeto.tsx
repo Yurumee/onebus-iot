@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableHighlight, Image, FlatList, ScrollView } from "react-native";
 import { AuthContext } from "../utils/authContext";
 import { useRouter } from "expo-router";
@@ -24,7 +24,9 @@ export default function Index() {
     };
   };
 
-  handleTrajetos()
+  useEffect(() => {
+    handleTrajetos()
+  }, [])
 
   return (
     <View style={styles.bg}>
@@ -39,7 +41,7 @@ export default function Index() {
               data={listaTrajetos}
               renderItem={({item}) => {
                 return <>
-                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.trajetoCard} onPress={() => {authContext.escolherTrajeto(item.trajeto_id)}}>
+                        <TouchableHighlight underlayColor={'#C0C0C0'} style={styles.trajetoCard} onPress={() => {authContext.escolherTrajeto(item.trajeto_id, item.carro_placa)}}>
                             <View style={styles.cardContainer}>
                                 <Image style={styles.pfp} source={require('../../assets/images/pfp.jpg')} />
                                 <View>

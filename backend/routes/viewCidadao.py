@@ -137,7 +137,7 @@ def get_especific_cidadao():
             'message':f'cidadao não encontrado: {str(e)}'
         }), 404
 
-@view_cidadao.route('/trajetos', methods=['GET'])
+@view_cidadao.route('/trajetos', methods=['POST'])
 def get_trajetos_vinculados():
     """
     Rota para mostrar os trajetos de um cidadao especifico
