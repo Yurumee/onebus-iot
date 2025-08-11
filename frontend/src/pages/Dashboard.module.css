@@ -44,7 +44,7 @@
     padding: 24px;
 }
 
-/* NOVO: Corpo do Card do Mapa */
+/* Corpo do Card do Mapa */
 .mapCardBody {
     padding: 0 !important;
     /* Remove o padding para o mapa preencher tudo */
@@ -155,10 +155,20 @@
 
 .vehicleTable tbody tr {
     transition: background-color 0.2s ease;
+    cursor: pointer;
+    /* Adicionado para indicar que a linha é clicável */
 }
 
 .vehicleTable tbody tr:hover {
     background-color: #f5f8fc;
+}
+
+/* Estilo para a linha selecionada */
+.selectedRow {
+    background-color: #FFFBEB !important;
+    /* Amarelo bem claro do tema */
+    --bs-table-accent-bg: #FFFBEB !important;
+    /* Sobrescreve o estilo de hover do Bootstrap */
 }
 
 .vehicleName {

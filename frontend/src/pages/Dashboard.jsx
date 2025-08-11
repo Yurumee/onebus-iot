@@ -1,9 +1,9 @@
 // src/pages/Dashboard.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Card, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTruck, faSatelliteDish, faRoute, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faTruck, faSatelliteDish } from '@fortawesome/free-solid-svg-icons';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -34,6 +34,8 @@ const StatCard = ({ icon, title, value, colorClass }) => (
 );
 
 function Dashboard() {
+  const [selectedVehicle, setSelectedVehicle] = useState(null); 
+
   const onlineVehicles = mockVehicles.filter(v => v.status !== 'Offline');
   const statusCounts = mockVehicles.reduce((acc, vehicle) => {
     acc[vehicle.status] = (acc[vehicle.status] || 0) + 1;
@@ -65,6 +67,10 @@ function Dashboard() {
     },
   };
 
+  const handleVehicleSelect = (vehicle) => {
+    setSelectedVehicle(vehicle);
+  }
+
   return (
     <div className={styles.dashboardPage}>
       <Container fluid>
@@ -80,7 +86,8 @@ function Dashboard() {
             <Card className={`${styles.mainCard} h-100 d-flex flex-column`}>
               <Card.Header>Localização da Frota em Tempo Real</Card.Header>
               <Card.Body className={`${styles.mapCardBody} flex-grow-1`}>
-                <VehicleMap vehicles={mockVehicles} />
+                {/* Propriedade 'selectedVehicle' */}
+                <VehicleMap vehicles={mockVehicles} selectedVehicle={selectedVehicle} />
               </Card.Body>
             </Card>
           </Col>
@@ -119,7 +126,12 @@ function Dashboard() {
                   </thead>
                   <tbody>
                     {onlineVehicles.map(v => (
-                      <tr key={v.id}>
+                      // Linhas da tabela são clicáveis e com estilo condicional
+                      <tr
+                        key={v.id}
+                        onClick={() => handleVehicleSelect(v)}
+                        className={selectedVehicle?.id === v.id ? styles.selectedRow : ''}
+                      >
                         <td><b>{v.id}</b><br /><small className={styles.vehicleName}>{v.name}</small></td>
                         <td>{v.driver}</td>
                         <td><Badge pill bg={v.status === 'Em Rota' ? 'success' : 'secondary'} className={styles.statusBadge}>{v.status}</Badge></td>
