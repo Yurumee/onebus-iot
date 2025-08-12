@@ -168,22 +168,37 @@ def edit_carro():
             new_tipo_veiculo = data.get('tipo-veiculo')
 
             if new_placa != carro_desejado.placa and new_placa != None:
-                trajetos = db.session.query(Trajeto).where(Trajeto.carro_placa == carro_desejado.placa)
-                motoristas = db.session.query(Motorista).where(Motorista.carro_placa == carro_desejado.placa)
-                carro_desejado.placa = new_placa
-
-                for motorista in motoristas:
-                    carro_desejado.motorista_cnh.append(motorista)
+                try:
+                    trajetos = db.session.query(Trajeto).where(Trajeto.carro_placa == carro_desejado.placa)
+                    motoristas = db.session.query(Motorista).where(Motorista.carro_placa == carro_desejado.placa)
                 
-                for trajeto in trajetos:
-                    carro_desejado.trajeto.append(trajeto)
+                    carro_desejado.placa = new_placa
 
-                db.session.commit()
+                    for motorista in motoristas:
+                        carro_desejado.motorista_cnh.append(motorista)
+
+                    for trajeto in trajetos:
+                        carro_desejado.trajeto.append(trajeto)
+
+                    db.session.commit()
+
+                except Exception as e:
+                    return jsonify({
+                        "status":"error",
+                        "message":f"{str(e)}"
+                    }), 500
 
             if new_tipo_veiculo != carro_desejado.tipo_veiculo and new_tipo_veiculo != None:
-                carro_desejado.tipo_veiculo = new_tipo_veiculo
-                db.session.commit()
-
+                try:
+                    carro_desejado.tipo_veiculo = new_tipo_veiculo
+                    db.session.commit()
+                    
+                except Exception as e:
+                    return jsonify({
+                        "status":"error",
+                        "message":f"{str(e)}"
+                    }), 500
+                
             return jsonify({
                 "status":"updated"
             }), 204
