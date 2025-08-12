@@ -1,0 +1,98 @@
+.reportsPage {
+    padding: 32px;
+    background-color: var(--background);
+}
+
+/* --- Cabeçalho da Página --- */
+.pageHeader {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e0e4e9;
+}
+
+.pageHeader h1 {
+    color: var(--dark-text);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.pageHeader p {
+    color: var(--medium-gray);
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+/* --- Card de Painel Padrão (Filtros, Resultados, Detalhes) --- */
+.panelCard {
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    border: none;
+    background-color: var(--white);
+}
+
+.panelCard :global(.card-header) {
+    background-color: var(--white);
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark-text);
+}
+
+/* --- Lista de Resultados --- */
+.resultsList {
+    max-height: 300px;
+    /* Adiciona uma barra de rolagem se a lista for muito grande */
+    overflow-y: auto;
+}
+
+/* --- Caixa de Detalhes (Distância, Duração) --- */
+.detailBox {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.detailBox>svg {
+    /* O ícone FontAwesome */
+    font-size: 1.5rem;
+    color: var(--blue);
+    flex-shrink: 0;
+}
+
+.detailBox div {
+    display: flex;
+    flex-direction: column;
+}
+
+.detailBox span {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--medium-gray);
+    font-weight: 500;
+}
+
+.detailBox strong {
+    font-size: 1.25rem;
+    color: var(--dark-text);
+    font-weight: 700;
+}
+
+/* --- Container do Mapa --- */
+.mapContainer {
+    height: 450px;
+    /* Altura fixa para o mapa */
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    /* Garante que o mapa respeite as bordas arredondadas */
+}
+
+/* Garante que o container interno do leaflet preencha o espaço */
+.mapContainer>div {
+    height: 100%;
+    width: 100%;
+}

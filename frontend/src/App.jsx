@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RoutesPage from './pages/Routes';
 import Drivers from './pages/Drivers';
+import Relatorios from './pages/Relatorios';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/rotas" element={<RoutesPage />} />
           <Route path="/motoristas" element={<Drivers />} />
+          <Route path="/relatorios" element={<Relatorios />} />
         </Route>
         
         {/* Você pode adicionar outras rotas aqui, como uma página 404 */}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faRoute, faUsers, faAngleLeft, faBus } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faRoute, faUsers, faAngleLeft, faBus, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './MainLayout.module.css';
 
@@ -55,6 +55,12 @@ function MainLayout() {
               <FontAwesomeIcon icon={faUsers} />
             </div>
             <span className={styles.menuText}>Motoristas</span>
+          </NavLink>
+          <NavLink to="/relatorios" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+            <div className={styles.menuIcon}>
+              <FontAwesomeIcon icon={faChartLine} />
+            </div>
+            <span className={styles.menuText}>Relatórios</span>
           </NavLink>
         </nav>
 
