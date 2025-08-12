@@ -28,23 +28,19 @@ def post_new_cidadao():
         senha = data.get('senha')
         tipo_usuario = data.get('tipo-usuario')
 
-        # cpf = '789.456.123-00'
-        # nome = 'Alice Mock'
-        # senha = 'senhaforte123'
         try:
             cidadao = Cidadao.query.filter_by(cpf=cpf_cidadao).first()
+        
         except Exception as e:
             return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            }), 400
+            }), 500
 
         if cidadao:
             return jsonify({
                 "status": "error",
-                "message": "Cidadão já cadastrado.",
-                "cpf": cpf_cidadao,
-                "nome": cidadao.nome_completo
+                "message": "Cidadão já cadastrado."
             }), 409
 
         new_cidadao = Cidadao(
@@ -58,13 +54,10 @@ def post_new_cidadao():
         db.session.commit()
 
         return jsonify({
-            "status": "success",
-            "message": "Cidadão cadastrado com sucesso.",
-            "cpf": cpf_cidadao,
-            "nome": nome_cidadao
+            "status": "created"
         }), 201
     
-    return render_template('pagina_cadastro.html'), 302
+    # return render_template('pagina_cadastro.html'), 302
     # return jsonify({
     #     'status':'OK'
     # })
@@ -80,20 +73,28 @@ def get_cidadao():
     Retorno:
         Página listando todos os cidadaos
     """
-        
-    cidadaos = Cidadao.query.all()
+    try:
+        cidadaos = Cidadao.query.all()
+    
+    except Exception as e:
+        return jsonify({
+            'status':'error',
+            'message':f'{str(e)}'
+        }), 500
 
-    # DEBUG
     resposta_json = {}
 
     for cidadao in cidadaos:
-        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, 
+                                      "cpf":cidadao.cpf, 
+                                      "senha":cidadao.senha, 
+                                      "tipo usuario":cidadao.tipo_usuario
+                                    }
 
     return jsonify({
-        "status":"success",
-        "message":"cidadaos encontrados",
-        "json":resposta_json
-    }), 200
+            "status":"success",
+            "data":resposta_json
+        }), 200
     # return render_template('todos-cidadaos.html', all_cidadao=cidadaos), 302
 
 @view_cidadao.route('/cidadao-especifico', methods=['GET', 'POST'])
@@ -113,28 +114,29 @@ def get_especific_cidadao():
     
     try:
         cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
+    
     except Exception as e:
         return jsonify({
             'status':'error',
             'message':f'{str(e)}'
-        }), 400
+        }), 500
 
     if cidadao:
-        resposta_json = {}
-
-        resposta_json[cidadao.cpf] = {"nome completo":cidadao.nome_completo, "cpf":cidadao.cpf, "senha":cidadao.senha, "tipo usuario":cidadao.tipo_usuario}
+        resposta_json = {"nome completo":cidadao.nome_completo, 
+                                      "cpf":cidadao.cpf, 
+                                      "senha":cidadao.senha, 
+                                      "tipo usuario":cidadao.tipo_usuario
+                                    }
 
         return jsonify({
                 "status":"success",
-                "message":"cidadao encontrado",
-                "json":resposta_json
+                "data":resposta_json
             }), 200
         # return render_template('cidadao_especifico.html', cidadao=cidadao), 302
     
     else:
         return jsonify({
-            'status':'error',
-            'message':f'cidadao não encontrado: {str(e)}'
+            'status':'not found'
         }), 404
 
 @view_cidadao.route('/trajetos', methods=['GET', 'POST'])
@@ -150,10 +152,24 @@ def get_trajetos_vinculados():
     """
     data = request.get_json()
     cpf_desejado = data.get('cidadao-cpf')
-    cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
+    
+    try:
+        cidadao = Cidadao.query.filter_by(cpf=cpf_desejado).first()
+    except Exception as e:
+        return jsonify({
+            'status':'error',
+            'message':f'{str(e)}'
+        }), 500
+    
     if cidadao:
         # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
-        trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
+        try:
+            trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
+        except Exception as e:
+            return jsonify({
+                'status':'error',
+                'message':f'{str(e)}'
+            }), 500
         
         resposta_json = {}
         for trajeto in trajetos_cidadao:
@@ -161,14 +177,12 @@ def get_trajetos_vinculados():
 
         return jsonify({
             "status": "success",
-            "message": "Trajetos encontrados.",
-            "trajetos": resposta_json,
+            "data": resposta_json,
         }), 200
     
     else:
         return jsonify({
-            'status':'error',
-            'message':f'cidadao não encontrado'
+            'status':'not found'
         }), 404
 
 
@@ -196,11 +210,12 @@ def edit_cidadao():
 
         try:
             cidadao = Cidadao.query.filter_by(cpf=cpf_cidadao).first()
+
         except Exception as e:
             return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            })
+            }), 500
         
         if cidadao:
             new_nome = data.get('cidadao-nome')
@@ -214,12 +229,11 @@ def edit_cidadao():
                     return jsonify({
                         "status":"error",
                         "message":f"{str(e)}"
-                    })
+                    }), 500
                 
                 return jsonify({
-                    "status":"success",
-                    "message":"update realizado com sucesso"
-                }), 200
+                    "status":"updated"
+                }), 204
             
             # else:
             #     return jsonify({
@@ -228,11 +242,10 @@ def edit_cidadao():
             #     }), 400
         else:
             return jsonify({
-                "status":"error",
-                "message":"cidadao nao encontrado"
+                "status":"not found"
             }), 404
         
-    return render_template('pagina_editar_cidadao.html'), 302
+    # return render_template('pagina_editar_cidadao.html'), 302
             
 
 @view_cidadao.route('/excluir-cidadao', methods=['GET', 'DELETE'])
@@ -262,7 +275,7 @@ def delete_cidadao():
             return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            }), 400
+            }), 500
         
         if cidadao:
             try:
@@ -275,20 +288,18 @@ def delete_cidadao():
                 return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            }), 400
+            }), 500
 
             return jsonify({
-                    "status":"success",
-                    "message":"cidadao deletado"
+                    "status":"deleted"
                 }), 204
 
         else:
             return jsonify({
-                "status":"error",
-                "message":"cidadao nao encontrado"
+                "status":"not found"
             }), 404
     
-    return render_template('pagina_deletar_cidadao.html'), 302
+    # return render_template('pagina_deletar_cidadao.html'), 302
         
 
 @view_cidadao.route('/login', methods=['GET', 'POST'])
@@ -313,29 +324,29 @@ def login():
         dadosRequest = request.get_json()
         cpf = dadosRequest.get('cpf')
         password = dadosRequest.get('senha')
-
-        user = Cidadao.query.filter_by(cpf=cpf).first()
-
+        
+        try:
+            user = Cidadao.query.filter_by(cpf=cpf).first()
+        
+        except Exception as e:
+            return jsonify({
+                'status':'error',
+                'message':f'{str(e)}'
+            }), 500
+        
         if user:
             if user.senha == password:
                 return jsonify({
-                    "status": "success",
-                    "message": "Autenticação realizada com sucesso.",
-                    "cpf": cpf,
-                    "nome": user.nome_completo
+                    "status": "success"
                 }), 200
             
             else:
                 return jsonify({
-                    "status": "error",
-                    "message": "Senha incorreta.",
-                    "cpf": cpf
+                    "status": "unauthorized"
                 }), 401
 
         return jsonify({
-            "status": "error",
-            "message": "Usuário não encontrado.",
-            "cpf": cpf
+            "status": "not found"
         }), 404
 
-    return render_template('pagina_login.html'), 302
+    # return render_template('pagina_login.html'), 302

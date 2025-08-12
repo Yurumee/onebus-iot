@@ -136,8 +136,7 @@ def get_especific_carro():
     
     else:
         return jsonify({
-            'status':'error',
-            'message':f'carro não encontrado: {str(e)}'
+            'status':'not found'
         }), 404
 
 @view_carro.route('/alterar-carro', methods=['GET', 'PATCH'])
@@ -192,8 +191,7 @@ def edit_carro():
 
         else:
             return jsonify({
-                "status":"not found",
-                "message":"carro nao encontrado"
+                "status":"not found"
             }), 404
     
     # return render_template('pagina_editar_motorista.html'), 302
@@ -248,8 +246,7 @@ def delete_carro():
 
         else:
             return jsonify({
-                "status":"not found",
-                "message":"carro nao encontrado"
+                "status":"not found"
             }), 404
     
     # return render_template('pagina_deletar_carro.html'), 302
@@ -277,14 +274,12 @@ def register_carro():
 
         if not motorista:
             return jsonify({
-                "status": "error",
-                "message": "Motorista não encontrado."
+                "status": "not found"
             }), 404
 
         if not carro_desejado:
             return jsonify({
-                "status": "error",
-                "message": "Carro não encontrado."
+                "status": "not found"
             }), 404
 
         if motorista.carro_placa == placa_motorista:
@@ -325,7 +320,7 @@ def post_point_carro():
     except Exception as e:
         return jsonify({
             "status":"error",
-            "message":f"houve um erro {str(e)}"
+            "message":f"{str(e)}"
         }), 500
     
     if carro_desejado:
@@ -353,7 +348,6 @@ def post_point_carro():
 
     else:
         return jsonify({
-            "status":"not found",
-            "message":"carro nao encontrado"
+            "status":"not found"
         }), 404
     
