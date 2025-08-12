@@ -1,31 +1,26 @@
 import React, { useState, useMemo } from 'react';
-import { Container, Row, Col, Card, Form, Button, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, ListGroup, Placeholder, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faCalendarAlt, faCar, faClock, faRoad } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faCalendarAlt, faCar, faClock, faRoad, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
-// Importando dados mocados
+// Importando dados e componentes
 import { mockHistoricoViagens } from '../mocks/mockHistoricoViagens';
 import { mockCarros } from '../mocks/mockCarros';
-
-// Importando o mapa e o componente de rota
 import VehicleMap from '../components/dashboard/VehicleMap';
 import RoutingMachine from '../components/RoutingMachine';
 import styles from './Relatorios.module.css';
 
-// --- Funções Auxiliares para Cálculo ---
+// --- Funções Auxiliares ---
 const haversineDistance = (coords1, coords2) => {
     const toRad = (x) => (x * Math.PI) / 180;
-    const R = 6371; // Raio da Terra em km
-
+    const R = 6371;
     const dLat = toRad(coords2.lat - coords1.lat);
     const dLon = toRad(coords2.lng - coords1.lng);
     const lat1 = toRad(coords1.lat);
     const lat2 = toRad(coords2.lat);
-
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // Distância em km
+    return R * c;
 };
 
 const calculateTripDetails = (viagem) => {
@@ -33,22 +28,36 @@ const calculateTripDetails = (viagem) => {
     for (let i = 0; i < viagem.pontos.length - 1; i++) {
         totalDistance += haversineDistance(viagem.pontos[i], viagem.pontos[i + 1]);
     }
-
     const startTime = new Date(viagem.pontos[0].timestamp);
     const endTime = new Date(viagem.pontos[viagem.pontos.length - 1].timestamp);
-    const durationMinutes = (endTime - startTime) / 60000; // Duração em minutos
-
+    const durationMinutes = (endTime - startTime) / 60000;
     return {
         distancia: totalDistance.toFixed(2),
         duracao: Math.round(durationMinutes),
     };
 };
 
+// --- Componente de Card de Detalhe ---
+const DetailStatCard = ({ icon, title, value, unit, colorClass }) => (
+    <div className={`${styles.detailStatCard} ${styles[colorClass]}`}>
+        <div className={styles.statIconWrapper}>
+            <FontAwesomeIcon icon={icon} />
+        </div>
+        <div className={styles.statInfo}>
+            <span className={styles.statTitle}>{title}</span>
+            <span className={styles.statValue}>
+                {value} <span className={styles.statUnit}>{unit}</span>
+            </span>
+        </div>
+    </div>
+);
+
 
 function Relatorios() {
     const [filtros, setFiltros] = useState({ placa: '', data: '' });
     const [viagensFiltradas, setViagensFiltradas] = useState([]);
     const [viagemSelecionada, setViagemSelecionada] = useState(null);
+    const [buscou, setBuscou] = useState(false);
 
     const handleFilterChange = (e) => {
         setFiltros({ ...filtros, [e.target.name]: e.target.value });
@@ -56,7 +65,6 @@ function Relatorios() {
 
     const handleSearch = () => {
         let resultado = mockHistoricoViagens;
-
         if (filtros.placa) {
             resultado = resultado.filter(v => v.placa === filtros.placa);
         }
@@ -64,10 +72,10 @@ function Relatorios() {
             resultado = resultado.filter(v => v.data === filtros.data);
         }
         setViagensFiltradas(resultado);
-        setViagemSelecionada(null); // Limpa a seleção ao buscar
+        setViagemSelecionada(null);
+        setBuscou(true);
     };
 
-    // Calcula os detalhes apenas quando a viagem selecionada mudar
     const detalhesDaViagem = useMemo(() => {
         if (!viagemSelecionada) return null;
         return calculateTripDetails(viagemSelecionada);
@@ -81,15 +89,19 @@ function Relatorios() {
                     <p>Analise o histórico de viagens, distâncias percorridas e tempo gasto.</p>
                 </header>
 
-                <Row>
-                    {/* Coluna de Filtros e Resultados */}
-                    <Col lg={4}>
+                {/* Layout Principal Dividido */}
+                <Row className="g-4">
+                    {/* Coluna Esquerda: Filtros e Resultados */}
+                    <Col lg={4} className="d-flex flex-column g-4">
                         <Card className={styles.panelCard}>
-                            <Card.Header>Filtros</Card.Header>
+                            <Card.Header>
+                                <FontAwesomeIcon icon={faSearch} className="me-2" />
+                                Painel de Busca
+                            </Card.Header>
                             <Card.Body>
                                 <Form>
                                     <Form.Group className="mb-3">
-                                        <Form.Label><FontAwesomeIcon icon={faCar} className="me-2" />Veículo</Form.Label>
+                                        <Form.Label>Veículo</Form.Label>
                                         <Form.Select name="placa" value={filtros.placa} onChange={handleFilterChange}>
                                             <option value="">Todos os veículos</option>
                                             {mockCarros.map(carro => (
@@ -98,51 +110,72 @@ function Relatorios() {
                                         </Form.Select>
                                     </Form.Group>
                                     <Form.Group className="mb-3">
-                                        <Form.Label><FontAwesomeIcon icon={faCalendarAlt} className="me-2" />Data da Viagem</Form.Label>
+                                        <Form.Label>Data da Viagem</Form.Label>
                                         <Form.Control type="date" name="data" value={filtros.data} onChange={handleFilterChange} />
                                     </Form.Group>
-                                    <Button variant="primary" onClick={handleSearch} className="w-100">
-                                        <FontAwesomeIcon icon={faSearch} className="me-2" />Buscar
+                                    <Button variant="primary" onClick={handleSearch} className="w-100 fw-bold">
+                                        Buscar Relatórios
                                     </Button>
                                 </Form>
                             </Card.Body>
                         </Card>
 
-                        <Card className={`${styles.panelCard} mt-4`}>
-                            <Card.Header>Viagens Encontradas ({viagensFiltradas.length})</Card.Header>
-                            <ListGroup variant="flush" className={styles.resultsList}>
-                                {viagensFiltradas.length > 0 ? viagensFiltradas.map(viagem => (
-                                    <ListGroup.Item key={viagem.id} action onClick={() => setViagemSelecionada(viagem)} active={viagemSelecionada?.id === viagem.id}>
-                                        <strong>{viagem.placa}</strong> - <small>{new Date(viagem.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>
-                                        <span className="d-block text-muted">{viagem.motorista}</span>
-                                    </ListGroup.Item>
-                                )) : (
-                                    <ListGroup.Item className="text-center text-muted">Nenhuma viagem encontrada.</ListGroup.Item>
-                                )}
-                            </ListGroup>
-                        </Card>
+                        {/* A lista de resultados só aparece depois da busca */}
+                        {buscou && (
+                            <Card className={`${styles.panelCard} flex-grow-1`}>
+                                <Card.Header>Resultados ({viagensFiltradas.length})</Card.Header>
+                                <ListGroup variant="flush" className={styles.resultsList}>
+                                    {viagensFiltradas.length > 0 ? viagensFiltradas.map(viagem => (
+                                        <ListGroup.Item key={viagem.id} action onClick={() => setViagemSelecionada(viagem)} active={viagemSelecionada?.id === viagem.id}>
+                                            <strong>{viagem.placa}</strong> - <span>{viagem.motorista}</span>
+                                            <small className="d-block text-muted">{new Date(viagem.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>
+                                        </ListGroup.Item>
+                                    )) : (
+                                        <div className={styles.emptyState}>
+                                            <p>Nenhuma viagem encontrada para os filtros aplicados.</p>
+                                        </div>
+                                    )}
+                                </ListGroup>
+                            </Card>
+                        )}
                     </Col>
 
-                    {/* Coluna de Detalhes da Viagem e Mapa */}
+                    {/* Coluna Direita: Detalhes e Mapa */}
                     <Col lg={8}>
                         <Card className={`${styles.panelCard} h-100`}>
-                            <Card.Header>Detalhes da Viagem</Card.Header>
-                            <Card.Body>
+                            <Card.Header>Detalhes da Viagem Selecionada</Card.Header>
+                            <Card.Body className="d-flex flex-column">
                                 {viagemSelecionada && detalhesDaViagem ? (
-                                    <div>
-                                        <Row className="mb-4">
-                                            <Col><div className={styles.detailBox}><FontAwesomeIcon icon={faRoad} /> <div><span>Distância</span><strong>{detalhesDaViagem.distancia} km</strong></div></div></Col>
-                                            <Col><div className={styles.detailBox}><FontAwesomeIcon icon={faClock} /> <div><span>Duração</span><strong>{detalhesDaViagem.duracao} min</strong></div></div></Col>
-                                        </Row>
+                                    <>
+                                        {/* Detalhes da Viagem */}
+                                        <div className={styles.detailsHeader}>
+                                            <div>
+                                                <h3 className={styles.detailsTitle}>{viagemSelecionada.placa}</h3>
+                                                <p className={styles.detailsSubtitle}>
+                                                    Motorista: {viagemSelecionada.motorista} | Data: {new Date(viagemSelecionada.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                                                </p>
+                                            </div>
+                                            <div className={styles.statsGrid}>
+                                                <DetailStatCard icon={faRoad} title="Distância" value={detalhesDaViagem.distancia} unit="km" colorClass="distance" />
+                                                <DetailStatCard icon={faClock} title="Duração" value={detalhesDaViagem.duracao} unit="min" colorClass="duration" />
+                                            </div>
+                                        </div>
+
+                                        {/* Mapa */}
                                         <div className={styles.mapContainer}>
-                                            <VehicleMap vehicles={[]} selectedVehicle={{ position: viagemSelecionada.pontos[0] }}>
-                                                <RoutingMachine points={viagemSelecionada.pontos} isEditing={false} />
+                                            <VehicleMap vehicles={[]} selectedVehicle={{ position: viagemSelecionada.pontos[0] }} >
+                                                {viagemSelecionada.pontos.length > 1 && (
+                                                    <RoutingMachine points={viagemSelecionada.pontos} isEditing={false} />
+                                                )}
                                             </VehicleMap>
                                         </div>
-                                    </div>
+                                    </>
                                 ) : (
-                                    <div className="text-center text-muted h-100 d-flex align-items-center justify-content-center">
-                                        <p>Selecione uma viagem à esquerda para ver os detalhes.</p>
+                                    // Estado Vazio Centralizado
+                                    <div className={styles.emptyState}>
+                                        <FontAwesomeIcon icon={faInfoCircle} size="3x" className="mb-3" />
+                                        <h4>Nenhuma viagem selecionada</h4>
+                                        <p>Faça uma busca e selecione uma viagem na lista para ver seus detalhes e o trajeto no mapa.</p>
                                     </div>
                                 )}
                             </Card.Body>

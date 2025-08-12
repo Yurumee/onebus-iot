@@ -7,7 +7,7 @@
 .pageHeader {
     margin-bottom: 32px;
     padding-bottom: 24px;
-    border-bottom: 1px solid #e0e4e9;
+    border-bottom: 1px solid var(--border-color, #e0e4e9);
 }
 
 .pageHeader h1 {
@@ -22,77 +22,180 @@
     margin-bottom: 0;
 }
 
-/* --- Card de Painel Padrão (Filtros, Resultados, Detalhes) --- */
+/* --- Card de Painel Padrão (Filtros, Resultados) --- */
 .panelCard {
     border-radius: 16px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
     border: none;
     background-color: var(--white);
+    display: flex;
+    flex-direction: column;
 }
 
 .panelCard :global(.card-header) {
     background-color: var(--white);
     padding: 16px 24px;
-    border-bottom: 1px solid #f0f2f5;
+    border-bottom: 1px solid var(--border-color, #f0f2f5);
     font-weight: 600;
     font-size: 1.1rem;
     color: var(--dark-text);
+    display: flex;
+    align-items: center;
+}
+
+.panelCard :global(.card-body) {
+    padding: 24px;
 }
 
 /* --- Lista de Resultados --- */
 .resultsList {
-    max-height: 300px;
-    /* Adiciona uma barra de rolagem se a lista for muito grande */
     overflow-y: auto;
+    flex-grow: 1;
+    /* Faz a lista ocupar o espaço restante */
+    border-radius: 0 0 16px 16px;
+    /* Arredonda cantos inferiores */
 }
 
-/* --- Caixa de Detalhes (Distância, Duração) --- */
-.detailBox {
+.resultsList :global(.list-group-item) {
+    padding: 12px 24px;
+    border-left: none;
+    border-right: none;
+}
+
+.resultsList :global(.list-group-item.active) {
+    background-color: var(--blue);
+    color: var(--white);
+    border-color: var(--blue);
+}
+
+/* --- Detalhes da Viagem (Coluna Direita) --- */
+.detailsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.detailsTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.detailsSubtitle {
+    font-size: 1rem;
+    color: var(--medium-gray);
+    margin-top: 4px;
+}
+
+/* Grid para as estatísticas de detalhe */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    flex-shrink: 0;
+    /* Impede que os cards encolham */
+}
+
+/* Card de Estatística de Detalhe */
+.detailStatCard {
+    background-color: var(--background);
+    border-radius: 12px;
+    padding: 16px;
     display: flex;
     align-items: center;
     gap: 16px;
-    background-color: #f8f9fa;
-    padding: 16px;
-    border-radius: 12px;
 }
 
-.detailBox>svg {
-    /* O ícone FontAwesome */
-    font-size: 1.5rem;
-    color: var(--blue);
+.statIconWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    font-size: 1.25rem;
+    color: var(--white);
 }
 
-.detailBox div {
+.statInfo {
     display: flex;
     flex-direction: column;
 }
 
-.detailBox span {
+.statTitle {
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-weight: 600;
+    font-size: 0.75rem;
     color: var(--medium-gray);
-    font-weight: 500;
+    margin-bottom: 4px;
 }
 
-.detailBox strong {
-    font-size: 1.25rem;
-    color: var(--dark-text);
+.statValue {
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--dark-text);
+    line-height: 1;
+}
+
+.statUnit {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--medium-gray);
+    margin-left: 4px;
+}
+
+/* Cores dos Ícones de Detalhe */
+.distance .statIconWrapper {
+    background-color: var(--blue);
+}
+
+.duration .statIconWrapper {
+    background-color: var(--green);
 }
 
 /* --- Container do Mapa --- */
 .mapContainer {
-    height: 450px;
-    /* Altura fixa para o mapa */
+    flex-grow: 1;
+    /* Faz o mapa ocupar o espaço vertical restante */
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    /* Garante que o mapa respeite as bordas arredondadas */
+    background-color: #f0f2f5;
+    /* Cor de fundo enquanto o mapa carrega */
+    min-height: 300px;
+    /* Altura mínima para o mapa */
 }
 
 /* Garante que o container interno do leaflet preencha o espaço */
 .mapContainer>div {
     height: 100%;
     width: 100%;
+}
+
+/* --- Estado Vazio (Nenhum resultado ou seleção) --- */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    padding: 24px;
+    color: var(--medium-gray);
+}
+
+.emptyState h4 {
+    color: var(--dark-gray);
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.emptyState p {
+    max-width: 400px;
 }
