@@ -1,42 +1,84 @@
 import React, { useState, useMemo } from 'react';
-// IMPORTAÇÕES DE REACT-BOOTSTRAP (Marker e Popup foram removidos daqui)
 import { Container, Row, Col, Card, Form, Button, ListGroup } from 'react-bootstrap';
-// IMPORTAÇÕES DE REACT-LEAFLET (Marker e Popup foram adicionados aqui)
 import { Marker, Popup } from 'react-leaflet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faClock, faRoad, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { mockHistoricoViagens } from '../mocks/mockHistoricoViagens';
 import { mockCarros } from '../mocks/mockCarros';
-// Importando o mapa E OS NOVOS ÍCONES
 import VehicleMap, { startIcon, endIcon } from '../components/dashboard/VehicleMap';
 import RoutingMachine from '../components/RoutingMachine';
 import styles from './Relatorios.module.css';
 
-// --- Funções e Componentes auxiliares (sem alterações) ---
+// --- FUNÇÃO PARA CALCULAR DISTÂNCIA ---
+/**
+ * Calcula a distância entre duas coordenadas de latitude e longitude usando a fórmula de Haversine.
+ * Esta fórmula leva em conta a curvatura da Terra para um cálculo preciso.
+ * @param {object} coords1 - Coordenadas do primeiro ponto {lat, lng}.
+ * @param {object} coords2 - Coordenadas do segundo ponto {lat, lng}.
+ * @returns {number} A distância em quilômetros.
+ */
 const haversineDistance = (coords1, coords2) => {
+    // Função auxiliar para converter graus para radianos
     const toRad = (x) => (x * Math.PI) / 180;
-    const R = 6371;
+
+    const R = 6371; // Raio da Terra em quilômetros
+
+    // Diferença de latitude e longitude em radianos
     const dLat = toRad(coords2.lat - coords1.lat);
     const dLon = toRad(coords2.lng - coords1.lng);
+
+    // Converte as latitudes originais para radianos
     const lat1 = toRad(coords1.lat);
     const lat2 = toRad(coords2.lat);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+    // Parte central da fórmula de Haversine
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+    // Segunda parte da fórmula
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    // Distância final é o raio da Terra multiplicado pelo resultado de 'c'
     return R * c;
 };
 
+
+// --- FUNÇÃO PARA CALCULAR OS DETALHES TOTAIS DA VIAGEM ---
+/**
+ * Calcula a distância total e a duração de uma viagem com base em seus pontos de GPS.
+ * @param {object} viagem - O objeto da viagem contendo um array de pontos.
+ * @returns {object} Um objeto com a distância (km) e a duração (minutos).
+ */
 const calculateTripDetails = (viagem) => {
-    if (!viagem || viagem.pontos.length === 0) return { distancia: 0, duracao: 0 };
+    if (!viagem || viagem.pontos.length < 2) return { distancia: 0, duracao: 0 };
+
+    // --- CÁLCULO DA DISTÂNCIA TOTAL ---
     let totalDistance = 0;
+    // Itera por todos os pontos da viagem, exceto o último
     for (let i = 0; i < viagem.pontos.length - 1; i++) {
-        totalDistance += haversineDistance(viagem.pontos[i], viagem.pontos[i + 1]);
+        // Calcula a distância entre o ponto atual e o próximo ponto
+        const segmentDistance = haversineDistance(viagem.pontos[i], viagem.pontos[i + 1]);
+        // Soma a distância do segmento à distância total
+        totalDistance += segmentDistance;
     }
+
+    // --- CÁLCULO DA DURAÇÃO TOTAL ---
+    // Pega o timestamp do primeiro ponto da viagem (início)
     const startTime = new Date(viagem.pontos[0].timestamp);
+    // Pega o timestamp do último ponto da viagem (fim)
     const endTime = new Date(viagem.pontos[viagem.pontos.length - 1].timestamp);
-    const durationMinutes = (endTime - startTime) / 60000;
+
+    // Calcula a diferença entre o tempo final e inicial. O resultado é em milissegundos.
+    const durationMilliseconds = endTime - startTime;
+    // Converte a duração de milissegundos para minutos (1 minuto = 60000 ms)
+    const durationMinutes = durationMilliseconds / 60000;
+
+    // Retorna os resultados finais
     return {
+        // Formata a distância para ter apenas 2 casas decimais e a converte para string
         distancia: totalDistance.toFixed(2),
+        // Arredonda a duração para o minuto inteiro mais próximo
         duracao: Math.round(durationMinutes),
     };
 };
@@ -97,10 +139,13 @@ function Relatorios() {
                 </header>
 
                 <Row className="g-4">
+                    {/* Coluna Esquerda: Filtros e Resultados */}
                     <Col lg={4} className="d-flex flex-column g-4">
-                        {/* Painel de Busca */}
                         <Card className={styles.panelCard}>
-                            <Card.Header><FontAwesomeIcon icon={faSearch} className="me-2" />Painel de Busca</Card.Header>
+                            <Card.Header>
+                                <FontAwesomeIcon icon={faSearch} className="me-2" />
+                                Painel de Busca
+                            </Card.Header>
                             <Card.Body>
                                 <Form>
                                     <Form.Group className="mb-3">
@@ -133,14 +178,16 @@ function Relatorios() {
                                             <small className="d-block text-muted">{new Date(viagem.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>
                                         </ListGroup.Item>
                                     )) : (
-                                        <div className={styles.emptyState}><p>Nenhuma viagem encontrada.</p></div>
+                                        <div className={styles.emptyState}>
+                                            <p>Nenhuma viagem encontrada.</p>
+                                        </div>
                                     )}
                                 </ListGroup>
                             </Card>
                         )}
                     </Col>
 
-                    {/* Mapa e Detalhes */}
+                    {/* Coluna Direita: Detalhes e Mapa */}
                     <Col lg={8}>
                         <Card className={`${styles.panelCard} h-100`}>
                             <Card.Header>Detalhes da Viagem Selecionada</Card.Header>
