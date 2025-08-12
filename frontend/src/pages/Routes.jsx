@@ -28,7 +28,7 @@ const streetIcon = new L.Icon({
 // --- DADOS MOCKADOS ---
 const mockInitialRoutes = [
   { id: 'R01', name: 'Rota Saúde - Manhã', service: 'Saúde', vehiclePlate: 'ONB-001', points: [{ id: 1, lat: -6.2603, lng: -36.5196, type: 'stop' }, { id: 2, lat: -6.2573, lng: -36.5222, type: 'street' }, { id: 3, lat: -6.2523, lng: -36.5247, type: 'stop' }] },
-  { id: 'R02', name: 'Rota Educação - Manhã', service: 'Educação', vehiclePlate: 'VAN-001', points: [{ id: 4, lat: -6.28, lng: -36.52, type: 'stop' }, { id: 5, lat: -6.29, lng: -36.53, type: 'street' }, { id: 6, lat: -6.2525, lng: -36.5335, type: 'stop' }] }
+  { id: 'R02', name: 'Rota Educação - Manhã', service: 'Educação', vehiclePlate: 'VAN-001', points: [{ id: 4, lat: -6.28, lng: -36.52, type: 'stop' }, { id: 5, lat: -6.2633, lng: -36.5217, type: 'street' }, { id: 6, lat: -6.2525, lng: -36.5335, type: 'stop' }] }
 ];
 const mockVehicles = [{ plate: 'ONB-001', name: 'Ônibus 01' }, { plate: 'VAN-001', name: 'Van 01' }, { plate: 'VAN-002', name: 'Van 02' }];
 
