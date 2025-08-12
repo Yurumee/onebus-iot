@@ -36,8 +36,7 @@ def post_new_car():
         
         if carro_existente:
             return jsonify({
-                "status":"error",
-                "message":"carro ja cadastrado"
+                "status":"conflict"
             }), 409
         
         else:
@@ -57,7 +56,7 @@ def post_new_car():
             except Exception as e:
                 return jsonify({
                 "status":"error",
-                "message":f"erro ao inserir no banco de dados: {str(e)}"
+                "message":f"{str(e)}"
                 }), 500
             
             return jsonify({
@@ -284,8 +283,7 @@ def register_carro():
 
         if motorista.carro_placa == placa_motorista:
             return jsonify({
-                "status": "warning",
-                "message": "Placa já associada ao motorista"
+                "status": "conflict"
             }), 409
 
         carro_desejado.motorista_cnh.append(motorista)

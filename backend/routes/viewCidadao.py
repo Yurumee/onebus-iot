@@ -39,8 +39,7 @@ def post_new_cidadao():
 
         if cidadao:
             return jsonify({
-                "status": "error",
-                "message": "Cidadão já cadastrado."
+                "status": "conflict"
             }), 409
 
         new_cidadao = Cidadao(
@@ -165,6 +164,7 @@ def get_trajetos_vinculados():
         # trajetos_cidadao = TrajetosCidadaos.query.filter_by(cidadao_cpf=cpf_desejado).all()
         try:
             trajetos_cidadao = db.session.query(TrajetosCidadaos, Trajeto).join(Trajeto, (Trajeto.id_trajeto == TrajetosCidadaos.trajeto_id) & (TrajetosCidadaos.cidadao_cpf == cpf_desejado)).all()
+        
         except Exception as e:
             return jsonify({
                 'status':'error',
