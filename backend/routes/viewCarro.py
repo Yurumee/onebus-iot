@@ -27,11 +27,12 @@ def post_new_car():
         
         try:
             carro_existente = Carro.query.filter_by(placa=placa_carro).first()
+
         except Exception as e:
             return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            }), 400
+            }), 500
         
         if carro_existente:
             return jsonify({
@@ -57,14 +58,13 @@ def post_new_car():
                 return jsonify({
                 "status":"error",
                 "message":f"erro ao inserir no banco de dados: {str(e)}"
-                }), 400
+                }), 500
             
             return jsonify({
-                "status":"success",
-                "message":"carro cadastrado com sucesso"
-                }), 201
+                "status":"created"
+            }), 201
     
-    return render_template('pagina_inserir_carro.html'), 302
+    # return render_template('pagina_inserir_carro.html'), 302
 
 @view_carro.route('/todos', methods=['GET'])
 def get_carro():
@@ -77,7 +77,14 @@ def get_carro():
     Retorno:
         Página listando todos os carros
     """
-    carros = Carro.query.all()
+    try:
+        carros = Carro.query.all()
+
+    except Exception as e:
+            return jsonify({
+                "status":"error",
+                "message":f"{str(e)}"
+            }), 500
     
     # DEBUG
     resposta_json = {}
@@ -87,9 +94,8 @@ def get_carro():
 
     return jsonify({
         "status":"success",
-        "message":"carros encontrados",
-        "json":resposta_json
-    }), 200
+        "data":resposta_json
+        }), 200
     # return render_template('todos_carros.html', all_carros=carros), 302
 
 @view_carro.route('/carro-especifico', methods=['GET', 'POST'])
@@ -106,22 +112,26 @@ def get_especific_carro():
 
     data = request.get_json()
     placa_desejada = data.get('placa-carro')
+
     try:
         carro = Carro.query.filter_by(placa=placa_desejada).first()
+    
     except Exception as e:
         return jsonify({
             'status':'error',
             'message':f'{str(e)}'
-        }), 400
+        }), 500
     
     if carro:
-        resposta_json = {"placa":carro.placa, "latitude atual":carro.latitude_atual, "longitude atual":carro.longitude_atual, "tipo veiculo":carro.tipo_veiculo}
+        resposta_json = {"placa":carro.placa, 
+                         "latitude atual":carro.latitude_atual, 
+                         "longitude atual":carro.longitude_atual, 
+                         "tipo veiculo":carro.tipo_veiculo
+                        }
         
         return jsonify({
-        "status":"success",
-        "message":"carro encontrado",
-        "json":resposta_json
-    }), 200
+                "data":resposta_json
+                }), 200
         # return render_template('carro_especifico.html', carro=carro), 302
     
     else:
@@ -129,9 +139,6 @@ def get_especific_carro():
             'status':'error',
             'message':f'carro não encontrado: {str(e)}'
         }), 404
-    
-# @view_motorista.route('/motorista')
-
 
 @view_carro.route('/alterar-carro', methods=['GET', 'PATCH'])
 def edit_carro():
@@ -151,11 +158,12 @@ def edit_carro():
 
         try:
             carro_desejado = Carro.query.filter_by(placa=placa).first()
+
         except Exception as e:
             return  jsonify({
                 "status":"error",
-                "message":f"houve um erro {str(e)}"
-            })
+                "message":f"{str(e)}"
+            }), 500
         
         if carro_desejado:
             new_placa = data.get('new-placa-carro')
@@ -167,7 +175,6 @@ def edit_carro():
                 carro_desejado.placa = new_placa
 
                 for motorista in motoristas:
-                    # motorista.carro_placa = new_placa
                     carro_desejado.motorista_cnh.append(motorista)
                 
                 for trajeto in trajetos:
@@ -180,9 +187,8 @@ def edit_carro():
                 db.session.commit()
 
             return jsonify({
-                "status":"success",
-                "message":"updates realizados com sucesso"
-            }), 200
+                "status":"updated"
+            }), 204
 
         else:
             return jsonify({
@@ -190,7 +196,7 @@ def edit_carro():
                 "message":"carro nao encontrado"
             }), 404
     
-    return render_template('pagina_editar_motorista.html'), 302
+    # return render_template('pagina_editar_motorista.html'), 302
 
 @view_carro.route('/excluir-carro', methods=['GET', 'DELETE'])
 def delete_carro():
@@ -202,39 +208,43 @@ def delete_carro():
 
         try:
             carro_desejado = Carro.query.filter_by(placa=placa_carro).first()
+        
         except Exception as e:
             return jsonify({
                 "status":"error",
                 "message":f"{str(e)}"
-            }), 400
+            }), 500
 
         if carro_desejado:
             try:
                 trajeto = Trajeto.query.filter_by(carro_placa = placa_carro).first()
-                db.session.query(Trajeto).where(Trajeto.carro_placa == placa_carro).delete()
-                db.session.query(PontoViagem).where(PontoViagem.carro_placa == placa_carro).delete()
-                db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.trajeto_id == trajeto.id_trajeto).delete()
-
+                ponto = PontoViagem.query.filter_by(carro_placa = placa_carro).first()
+                
+                if trajeto:
+                    db.session.query(Trajeto).where(Trajeto.carro_placa == placa_carro).delete()
+                    db.session.query(TrajetosCidadaos).where(TrajetosCidadaos.trajeto_id == trajeto.id_trajeto).delete()
+                
+                if ponto:
+                    db.session.query(PontoViagem).where(PontoViagem.carro_placa == placa_carro).delete()
+                
                 motoristas = db.session.query(Motorista).where(Motorista.carro_placa == placa_carro)
 
                 for motorista in motoristas:
                     motorista.carro_placa = None
-
 
                 Carro.query.filter_by(placa=placa_carro).delete()
             
             except Exception as e:
                 return jsonify({
                 "status":"error",
-                "message":f"houve um erro {str(e)}"
-            }), 400
+                "message":f"{str(e)}"
+            }), 500
 
             db.session.commit()
 
             return jsonify({
-                "status":"deleted",
-                "message":"carro deletado com sucesso"
-            }), 200
+                "status":"deleted"
+            }), 204
 
         else:
             return jsonify({
@@ -242,7 +252,7 @@ def delete_carro():
                 "message":"carro nao encontrado"
             }), 404
     
-    return render_template('pagina_deletar_carro.html'), 302
+    # return render_template('pagina_deletar_carro.html'), 302
 
 @view_carro.route('/associar-motorista', methods=['GET', 'POST'])
 def register_carro():
@@ -255,42 +265,42 @@ def register_carro():
         cnh_motorista = data.get('motorista-cnh')
         placa_motorista = data.get('placa-carro')
 
-        motorista = Motorista.query.filter_by(cnh=cnh_motorista).first()
-        carro_desejado = Carro.query.filter_by(placa=placa_motorista).first()
+        try:
+            motorista = Motorista.query.filter_by(cnh=cnh_motorista).first()
+            carro_desejado = Carro.query.filter_by(placa=placa_motorista).first()
+        
+        except Exception as e:
+            return jsonify({
+            "status":"error",
+            "message":f"{str(e)}"
+        }), 500
 
         if not motorista:
             return jsonify({
                 "status": "error",
-                "message": "Motorista não encontrado.",
-                "cnh": cnh_motorista
+                "message": "Motorista não encontrado."
             }), 404
 
         if not carro_desejado:
             return jsonify({
                 "status": "error",
-                "message": "Carro não encontrado.",
-                "placa": placa_motorista
+                "message": "Carro não encontrado."
             }), 404
 
         if motorista.carro_placa == placa_motorista:
             return jsonify({
                 "status": "warning",
-                "message": "Placa já associada ao motorista.",
-                "cnh": cnh_motorista,
-                "placa": placa_motorista
-            }), 200
+                "message": "Placa já associada ao motorista"
+            }), 409
 
         carro_desejado.motorista_cnh.append(motorista)
         db.session.commit()
 
         return jsonify({
-            "status": "success",
-            "message": "Carro associado ao motorista com sucesso.",
-            "cnh": cnh_motorista,
-            "placa": placa_motorista
-        }), 200
+            "status": "success"
+        }), 201
     
-    return render_template('pagina_associar_carro.html'), 302
+    # return render_template('pagina_associar_carro.html'), 302
 
 @view_carro.route('/post-point-now', methods=['POST'])
 def post_point_carro():
@@ -316,7 +326,7 @@ def post_point_carro():
         return jsonify({
             "status":"error",
             "message":f"houve um erro {str(e)}"
-        }), 400
+        }), 500
     
     if carro_desejado:
         try:
@@ -328,12 +338,17 @@ def post_point_carro():
 
             db.session.commit()
 
+            # DESCOMENTAR CASO SEJA PREFERÍVEL
+            # return jsonify({
+            #             "status":"created"
+            #         }), 204
+
             return 204
         
         except Exception as e:
             return jsonify({
             "status":"error",
-            "message":f"houve um erro {str(e)}"
+            "message":f"{str(e)}"
         }), 400
 
     else:
